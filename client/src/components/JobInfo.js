@@ -6,7 +6,7 @@ const propTypes = {
 };
 
 export default JobInfo = (jobPost) => {
-  const { comapny,
+  const { company,
           job_title,
           job_description,
           basic_qualifications,

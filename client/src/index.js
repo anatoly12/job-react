@@ -27,7 +27,7 @@ consoleErrorReporter.propTypes = {
 const render = function (Component) {
   ReactDOM.render(
     <AppContainer errorReporter={consoleErrorReporter}>
-        <Component />
+      <Component />
     </AppContainer>,
     document.getElementById('root')
   )

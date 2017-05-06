@@ -11,8 +11,6 @@ pids
 
 # Compiled Dirs (http://nodejs.org/api/addons.html)
 build/
-dist/
-!dist/index.html
 
 # Dependency directorys
 # Deployed apps should consider commenting these lines out:

@@ -5,7 +5,7 @@ const propTypes = {
   jobPost: PropTypes.object.isRequired,
 };
 
-export default JobInfo = (jobPost) => {
+const JobInfo = (jobPost) => {
   const { company,
           job_title,
           job_description,
@@ -32,3 +32,5 @@ export default JobInfo = (jobPost) => {
     </div>
   )
 }
+
+export default JobInfo;

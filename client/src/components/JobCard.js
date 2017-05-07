@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import JobInfo from './JobInfo';
-import jobPost from './sampleData.js';
+import jobPost from '../../../database/sampleData.js';
 import { FlatButton, RaisedButton, Dialog } from 'material-ui/Dialog';
 
 const propTypes = {

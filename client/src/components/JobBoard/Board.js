@@ -28,7 +28,6 @@ export default class Board extends React.Component {
           ]
         },
         {
-
           header: "Phone",
           cards: [
             { id: 7, company: "Angel Hack", title: "software engineer" },

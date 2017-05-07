@@ -33,10 +33,10 @@ export default class InterviewTab extends Component {
     console.log('interviewTime: ', this.state.interviewTime);
     // add a day
     const {interviewDate, interviewTime} = this.state;
-
+    interviewDate.setDate(interviewDate.getDate() - 1);
     // Add 1 week to date
     var followUpDate = new Date();
-    followUpDate.setDate(interviewDate.getDate() + 5)
+    followUpDate.setDate(interviewDate.getDate() + 5);
 
     // Reminder date is 1 day after
     // console.log('reminderDate: ', reminderDate);

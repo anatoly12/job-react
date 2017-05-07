@@ -2,33 +2,24 @@ import React, { PropTypes, Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 
 const propTypes = {
-  sample: PropTypes.object.isRequired,
+  card: PropTypes.object.isRequired,
 };
 
-const JobInfo = (sample) => {
-  const { company_name,
-          job_title,
-          job_description,
-          basic_qualifications,
-          preferred_qualifications,
-          location,
-          posted_date,
-          post_url,
-        } = sample.sample.sampleJob1;
+const JobInfo = ({card}) => {
   return (
-    <div>
+    <div className="job-info">
       <h1>Title</h1>
-      { job_title } at { company_name }
+      { card.jobTitle } at { card.companyName }
       <h1>Location</h1>
-      { location }
+      { card.location }
       <h1>Description</h1>
-      { job_description }
+      { card.jobDescription }
       <h1>Basic Qualifications</h1>
-      { basic_qualifications }
+      { card.basicQualifications }
       <h1>Preferred Qualifications</h1>
-      { preferred_qualifications }
+      { card.preferredQualifications }
       <h1>Job Posting Url</h1>
-      { post_url }
+      { card.jobUrl }
     </div>
   )
 }

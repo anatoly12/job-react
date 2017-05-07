@@ -50,11 +50,6 @@ export default class Header extends React.Component {
             containerElement={<Link to="/call" />}
             primaryText="Call"
           />
-          <MenuItem 
-            onTouchTap={this.handleClose}
-            containerElement={<Link to="/job-card" />}
-            primaryText="Job Card"
-          />
         </Drawer>
       </div>
     );

@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import JobInfo from './JobInfo';
-import sample from '../../../database/sampleData.js';
 import { FlatButton, RaisedButton, Dialog } from 'material-ui';
+// import sample from '../../../database/sampleData.js';
 
 import InterviewTab from './InterviewTab';
 
@@ -29,32 +29,26 @@ export default class JobCard extends Component {
 	};
 
 	render() {
+    const {open, card, handleDialog} = this.props;
     const actions = [
 			// TODO: Consider to take out cancel, or click shaded area to cancel
       <FlatButton
         label="Cancel"
         primary={true}
-        onTouchTap={this.handleClose}
-      />,
-      <FlatButton
-        label="Save"
-        primary={true}
-        onTouchTap={this.handleClose}
+        onTouchTap={handleDialog}
       />,
     ];
 		return (
 			<div>
-        <RaisedButton label="Job Info" onTouchTap={this.handleOpen} />
         <Dialog
-          title="Job Info"
+          title={`${card.companyName} | ${card.jobTitle}`}
           actions={actions}
           modal={true}
           contentStyle={customContentStyle}
-          open={this.state.open}
+          open={open}
           autoScrollBodyContent={true}
         >
-					This is JOB INFO component.
-					<JobInfo sample={sample}/>
+					<JobInfo card={card}/>
           <InterviewTab />
         </Dialog>
 			</div>

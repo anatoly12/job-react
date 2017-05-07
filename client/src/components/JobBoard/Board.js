@@ -58,7 +58,6 @@ export default class Board extends React.Component {
   componentWillMount() {
     return util.fetchJobPosting()
     .then( result => { 
-      console.log('====result', result);
       this.setState({ list: result }) 
     });
   }

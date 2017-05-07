@@ -13,7 +13,7 @@ const JobInfo = (jobPost) => {
           preferred_qualifications,
           location,
           posted_date,
-          posted_url,
+          post_url,
         } = jobPost;
   return (
     <div>
@@ -32,11 +32,5 @@ const JobInfo = (jobPost) => {
     </div>
   )
 }
-<<<<<<< HEAD
 
 export default JobInfo;
-||||||| merged common ancestors
-=======
-
-export default JobInfo;
->>>>>>> (fix) Fix merge routes

@@ -1,14 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import JobInfo from './JobInfo';
-<<<<<<< HEAD
 import jobPost from '../../../database/sampleData.js';
-||||||| merged common ancestors
-import jobPost from './sampleData.js';
-=======
-import jobPost from '../../../database/sampleData';
-// import jobPost from './sampleData.js';
->>>>>>> (fix) Fix merge routes
-import { FlatButton, RaisedButton, Dialog } from 'material-ui/Dialog';
+import { FlatButton, RaisedButton, Dialog } from 'material-ui';
 
 const propTypes = {
 

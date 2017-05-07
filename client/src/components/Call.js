@@ -15,13 +15,28 @@ export default class Call extends React.Component {
     this.state = {
       prompt: 0,
       question: Math.floor(Math.random() * 3),
-      start: false
+      start: false,
+      src: null,
+      recordAudio: null,
+      blob: null,
+      stop: false,
+      transcript: '',
+      stream: null
     };
+
+    this.getUserMedia = this.getUserMedia.bind(this);
+    this.captureUserMedia = this.captureUserMedia.bind(this);
+    this.handleAudio = this.handleAudio.bind(this);
+    this.audioError = this.audioError.bind(this);
+    this.startRecord = this.startRecord.bind(this);
+    this.stopRecord = this.stopRecord.bind(this);
+    this.uploadAudio = this.uploadAudio.bind(this);
+    this.onEnd = this.onEnd.bind(this);
+    this.onResult = this.onResult.bind(this);
   }
 
 
   componentDidMount() {
-    this.props._detectMobileUser();
     this.getUserMedia();
   }
 
@@ -156,6 +171,7 @@ export default class Call extends React.Component {
                 this.setState({
                   prompt: prompt+1
                 });
+                this.startRecord();
               }}
 
             />
@@ -167,15 +183,22 @@ export default class Call extends React.Component {
     } else if (this.state.prompt === 2) {
       return (
         <div>
-
-          {this.state.start &&
-            <VoiceRecognition
-              onEnd={this.onEnd}
-              onResult={this.onResult}
-              continuous={true}
-              lang="en-US"
-              stop={this.state.stop}
-            />}
+          <audio autoPlay='true' src={this.state.src} muted="muted" controls></audio>
+          <MuiThemeProvider>
+            <RaisedButton
+              label="Stop"
+              onTouchTap={this.stopRecord}
+            />
+          </MuiThemeProvider>
+            {this.state.start &&
+              <VoiceRecognition
+                onEnd={this.onEnd}
+                onResult={this.onResult}
+                continuous={true}
+                lang="en-US"
+                stop={this.state.stop}
+              />}
+          <p>{this.state.transcript}</p>
         </div>
       );
 

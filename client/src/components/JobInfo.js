@@ -2,10 +2,10 @@ import React, { PropTypes, Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 
 const propTypes = {
-  jobPost: PropTypes.object.isRequired,
+  sample: PropTypes.object.isRequired,
 };
 
-const JobInfo = (jobPost) => {
+const JobInfo = (sample) => {
   const { company,
           job_title,
           job_description,
@@ -14,7 +14,7 @@ const JobInfo = (jobPost) => {
           location,
           posted_date,
           post_url,
-        } = jobPost;
+        } = sample.sample.sampleJob1;
   return (
     <div>
       <h1>Title</h1>

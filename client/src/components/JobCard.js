@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import JobInfo from './JobInfo';
-import jobPost from '../../../database/sampleData.js';
+import sample from '../../../database/sampleData.js';
 import { FlatButton, RaisedButton, Dialog } from 'material-ui';
 
 const propTypes = {
@@ -53,7 +53,7 @@ export default class JobCard extends Component {
           open={this.state.open}
         >
 					This is JOB INFO component.
-					<JobInfo jobPost={jobPost}/>
+					<JobInfo sample={sample}/>
         </Dialog>
 			</div>
 		);

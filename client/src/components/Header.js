@@ -29,7 +29,7 @@ export default class Header extends React.Component {
     return (
       <div>
         <AppBar
-        title="RubberDuckies"
+        title="JobFlow"
         iconClassNameRight="muidocs-icon-navigation-expand-more"
         onLeftIconButtonTouchTap={this.handleToggle}
         style={{backgroundColor: '#1C202C'}}

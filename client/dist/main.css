@@ -1,3 +1,6 @@
+/**
+ * Styling Reset
+ */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,3 +44,63 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
+/**
+ * Global Style
+ */
+
+body  {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  color: #4a4a4a;
+}
+
+h1 {
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+p {
+  font-size: 0.9em;
+  line-height: 1.8em;
+}
+
+/**
+ * Job Board Styling
+ */
+ .job-board {
+    display: flex;
+    flex-flow: row nowrap;
+    overflow-x: scroll;
+ }
+
+ .job-board-containers {
+    min-width: 287px;
+    height: 600px;
+    padding: 1rem;
+    border: 1px solid #FFF;
+    background: #F3F1F5;
+ }
+
+ .job-board-containers-header {
+  padding: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+ }
+
+.job-board-card {
+  padding: 1rem;
+  margin-bottom: .5rem;
+  background-color: white;
+  border-radius: 4px;
+  cursor: move;
+}
+
+.company-name {
+  font-weight: 700;
+}
+
+.job-title{
+  font-weight: 300;
+}
+

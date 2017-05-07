@@ -14,16 +14,22 @@ export default class JobEntry extends Component {
     this.state = {
       open: false,
       companyName: '',
-      job_title: '',
-      job_description: '',
-      basic_qualifications: '',
-      preferred_qualifications: '',
+      jobTitle: '',
+      jobDescription: '',
+      basicQualifications: '',
+      preferredQualifications: '',
       location: '',
-      post_url: '',
+      jobUrl: '',
     };
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleCompanyNameChange = this.handleCompanyNameChange.bind(this);
+    this.handleJobTitleChange = this.handleJobTitleChange.bind(this);
+    this.handleJobDescriptionChange = this.handleJobDescriptionChange.bind(this);
+    this.handleBasicQualificationsChange = this.handleBasicQualificationsChange.bind(this);
+    this.handlePreferredQualificationsChange = this.handlePreferredQualificationsChange.bind(this);
+    this.handleLocationChange = this.handleLocationChange.bind(this);
+    this.handleJobUrlChange = this.handleJobUrlChange.bind(this);
     this.onNewJobPostingSave = this.onNewJobPostingSave.bind(this);
   }
 
@@ -37,13 +43,17 @@ export default class JobEntry extends Component {
 		this.setState({ open: false });
 	}
 
-  handleCompanyNameChange = (e) => {
-    this.setState({ companyName: e.target.value });
-  }
-
+  handleCompanyNameChange = (e) => { this.setState({ companyName: e.target.value }) };
+  handleJobTitleChange = (e) => { this.setState({ jobTitle: e.target.value }) };
+  handleJobDescriptionChange = (e) => { this.setState({ jobDescription: e.target.value }) };
+  handleBasicQualificationsChange = (e) => { this.setState({ basicQualifications: e.target.value }) };
+  handlePreferredQualificationsChange = (e) => { this.setState({ preferredQualifications: e.target.value }) };
+  handleLocationChange = (e) => { this.setState({ handleLocationChange: e.target.value }) };
+  handleJobUrlChange = (e) => { this.setState({ handleJobUrlChange: e.target.value }) };
+  
   onNewJobPostingSave = (e) => {
     e.preventDefault();
-    util.submitNewJobPosting(this.state.companyName);
+    util.submitNewJobPosting(this.state);
   }
 
   render() {
@@ -84,17 +94,23 @@ export default class JobEntry extends Component {
             hintText="Job Title"
             errorText="This field is required"
             floatingLabelText="Job Title"
+            value={this.state.jobTitle}
+            onChange={this.handleJobTitleChange}
           /><br />
           <TextField
             hintText="Job Description"
             errorText="This field is required."
             floatingLabelText="Job Description"
             multiLine={true}
+            value={this.state.jobDescription}
+            onChange={this.handleJobDescriptionChange}
           /><br />
           <TextField
             hintText="Job Url"
             errorText="This field is required"
             floatingLabelText="Job Url"
+            value={this.state.jobUrl}
+            onChange={this.handleJobUrlChange}
           /><br />
         </Dialog>
       </div>

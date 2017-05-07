@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const JobPostSchema = mongoose.Schema({
+    boardName: { type: String, default: 'Interested' },
     companyName: { type: String, default: null },
     jobTitle: { type: String, default: null },
     jobDescription: { type: String, default: null },

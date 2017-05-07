@@ -13,6 +13,7 @@ export default class JobEntry extends Component {
     // TODO: Rename state to avoid duplication with JobEntry.jsx
     this.state = {
       open: false,
+      boardName: '',
       companyName: '',
       jobTitle: '',
       jobDescription: '',
@@ -23,6 +24,7 @@ export default class JobEntry extends Component {
     };
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.handleBoardName = this.handleBoardName.bind(this);
     this.handleCompanyNameChange = this.handleCompanyNameChange.bind(this);
     this.handleJobTitleChange = this.handleJobTitleChange.bind(this);
     this.handleJobDescriptionChange = this.handleJobDescriptionChange.bind(this);
@@ -43,6 +45,7 @@ export default class JobEntry extends Component {
 		this.setState({ open: false });
 	}
 
+  handleBoardName = (e) => { this.setState({ boardName: e.target.value }) };
   handleCompanyNameChange = (e) => { this.setState({ companyName: e.target.value }) };
   handleJobTitleChange = (e) => { this.setState({ jobTitle: e.target.value }) };
   handleJobDescriptionChange = (e) => { this.setState({ jobDescription: e.target.value }) };
@@ -83,6 +86,13 @@ export default class JobEntry extends Component {
           contentStyle={customContentStyle}
           open={this.state.open}
         >
+          <TextField
+            hintText="Board"
+            errorText="This field is required"
+            floatingLabelText="Board Name"
+            value={this.state.boardName}
+            onChange={this.handleBoardName}
+          /><br />
           <TextField
             hintText="Company Name"
             errorText="This field is required"

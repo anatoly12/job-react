@@ -1,6 +1,6 @@
 import React from 'react';
-// import Container from './Container';
 import ListCardContainer from './ListCardContainer';
+import util from '../../../lib/util';
 
 export default class Board extends React.Component {
   static propTypes = {
@@ -53,6 +53,14 @@ export default class Board extends React.Component {
         }
       ]
     }
+  }
+
+  componentWillMount() {
+    return util.fetchJobPosting()
+    .then( result => { 
+      console.log('====result', result);
+      this.setState({ list: result }) 
+    });
   }
 
   render() {    

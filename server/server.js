@@ -27,7 +27,6 @@ AWS.config.update({
 });
 
 const app = express()
-const bodyParser = require('body-parser');
 
 const db = require('../database/db_config.js');
 const rh = require('./requestHandlers');

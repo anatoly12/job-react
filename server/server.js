@@ -27,7 +27,7 @@ AWS.config.update({
 });
 
 var axios = require('axios')
-const app = express()
+const app = express();
 
 const db = require('../database/db_config.js');
 const rh = require('./requestHandlers');
@@ -93,6 +93,7 @@ app.get('/entry/:entryId', (req, res) => {
     res.send(JSON.stringify(url));
   })
   .catch( err => res.sendStatus(400).send(err));
+});
 
 
 app.post('/setReminder', function (req, res) {
@@ -201,5 +202,5 @@ app.get('*', function (req, res) {
 });
 
 app.listen(process.env.PORT || 3000, function () {
-  console.log(`Server is listening on PORT ${process.env.port || 3000}`)
+  console.log(`Server is listening on PORT ${process.env.port || 3000}`);
 });

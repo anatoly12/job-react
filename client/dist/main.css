@@ -80,6 +80,7 @@ p {
     padding: 1rem;
     border: 1px solid #FFF;
     background: #F3F1F5;
+    overflow-y: scroll;
  }
 
  .job-board-containers-header {

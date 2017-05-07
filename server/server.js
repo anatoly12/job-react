@@ -43,7 +43,8 @@ app.use(express.static(__dirname + '/../client/dist'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/storeJobPosting', rh.storeJobPosting);
+app.post('/JobPosting', rh.storeJobPosting);
+app.get('/JobPosting', rh.getJobPosting)
 
 app.post('/entry', upload.single('media'), (req, res) => {
   if (req.body.text.length === 0) {

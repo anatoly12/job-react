@@ -12,8 +12,8 @@ class Card extends Component {
       <div 
         className="job-board-card" 
         style={{ opacity: isDragging ? 0.5 : 1 }}>
-        <p className="company-name">{card.company}</p>
-        <p className="job-title">{card.title}</p>
+        <p className="company-name">{card.companyName}</p>
+        <p className="job-title">{card.jobTitle}</p>
       </div>
     ));
   }

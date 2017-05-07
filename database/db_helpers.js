@@ -12,3 +12,12 @@ module.exports.storeJobPosting = (postDetails) => {
     console.log('DBH: err storing job posting', err);
   })
 }
+
+module.exports.getJobPosting = (userInfo) => {
+  //connect with userInfo Auth later
+  return JobPost.find()
+  .then( result => result)
+  .catch(err => {
+    console.log('DBH: err storing job posting', err);
+  })
+}

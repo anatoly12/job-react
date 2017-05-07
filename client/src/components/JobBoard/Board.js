@@ -71,7 +71,7 @@ export default class Board extends React.Component {
           key={Math.floor(Math.random()*100)} 
           id={Math.floor(Math.random()*100)} 
           list={listcontainer.cards} 
-          header="Interested"/>
+          header={listcontainer.header}/>
       ))}
       </div>
     );

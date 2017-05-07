@@ -9,16 +9,18 @@ const fetchJobPosting = (userInfo) => {
   return axios.get('/JobPosting')
   .then( result => {
     
-    let list = {
-      cards: []
-    };
+    let list = {};
+    let final = [];
     
-    result.data.map( posting => {
-      // list.header = posting.header;
-      // delete posting.header;
-      list.cards.push(posting)
+    result.data.map( job => {
+      list[job.boardName] = list[job.boardName] || { header: job.boardName, cards: []}
+      list[job.boardName].cards.push(job)
     })
-    return [list];
+
+    for (let key in list) {
+      final.push(list[key]);
+    }
+    return final;
   })
   .catch(err => console.error(err.message));
 }

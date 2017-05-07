@@ -48,8 +48,8 @@ export default class JobEntry extends Component {
   handleJobDescriptionChange = (e) => { this.setState({ jobDescription: e.target.value }) };
   handleBasicQualificationsChange = (e) => { this.setState({ basicQualifications: e.target.value }) };
   handlePreferredQualificationsChange = (e) => { this.setState({ preferredQualifications: e.target.value }) };
-  handleLocationChange = (e) => { this.setState({ handleLocationChange: e.target.value }) };
-  handleJobUrlChange = (e) => { this.setState({ handleJobUrlChange: e.target.value }) };
+  handleLocationChange = (e) => { this.setState({ location: e.target.value }) };
+  handleJobUrlChange = (e) => { this.setState({ jobUrl: e.target.value }) };
   
   onNewJobPostingSave = (e) => {
     e.preventDefault();
@@ -105,6 +105,30 @@ export default class JobEntry extends Component {
             value={this.state.jobDescription}
             onChange={this.handleJobDescriptionChange}
           /><br />
+          <TextField
+            hintText="Basic Qualifications"
+            errorText="This field is required."
+            floatingLabelText="Basic Qualifications"
+            multiLine={true}
+            value={this.state.basicQualifications}
+            onChange={this.handleBasicQualificationsChange}
+          /><br />     
+          <TextField
+            hintText="Preferred Qualifications"
+            errorText="This field is required."
+            floatingLabelText="Preferred Qualifications"
+            multiLine={true}
+            value={this.state.preferredQualifications}
+            onChange={this.handlePreferredQualificationsChange}
+          /><br />  
+          <TextField
+            hintText="Location"
+            errorText="This field is required."
+            floatingLabelText="Location"
+            multiLine={true}
+            value={this.state.location}
+            onChange={this.handleLocationChange}
+          /><br />  
           <TextField
             hintText="Job Url"
             errorText="This field is required"

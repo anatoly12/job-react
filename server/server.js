@@ -1,6 +1,6 @@
-var express = require('express')
-var path = require('path')
-var cors = require('express-cors')
+const express = require('express')
+const path = require('path')
+const cors = require('express-cors')
 
 const app = express()
 

@@ -1,12 +1,10 @@
 import axios from 'axios';
 
-const submitNewJobPosting = (fields) => {
-  console.log('!!!???123', fields);
-  // return axios.post('/submitNewJobPosting', {
-  //   // params: { email, search_term, definition }
-  // });
+const submitNewJobPosting = (postDetails) => {
+  return axios.post('/storeJobPosting', {
+    params: postDetails;
+  });
 }
 
-// export { submitNewJobPosting };
 export default { submitNewJobPosting };
 

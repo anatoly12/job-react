@@ -1,19 +1,18 @@
 import React, { Component } from 'react'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link
-} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link} from 'react-router-dom'
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
+
 import Header from './Header'
 import Home from './Home'
-import Board from './Board';
+import Board from './JobBoard/Board';
 import Call from './Call';
 import JobCard from './JobCard';
 import JobEntry from './JobEntry';
 import FloatingButton from './FloatingButton';
 
-export default class App extends Component {
+class App extends Component {
   constructor (props) {
     super(props)
   }
@@ -39,3 +38,5 @@ export default class App extends Component {
     )
   }
 }
+
+export default DragDropContext(HTML5Backend)(App);

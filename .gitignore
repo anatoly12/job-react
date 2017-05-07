@@ -24,3 +24,6 @@ client/dist
 !client/dist/bundle.js
 !client/dist/index.html
 !client/dist/main.css
+!client/dist/*.mp3
+
+.env

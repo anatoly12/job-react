@@ -17,7 +17,6 @@ export default class MediaPlayer extends React.Component {
 
   render() {
     const {mediaSrc, mediaType} = this.props;
-    console.log('from media player', mediaSrc);
     return (
       <div>
          {this.renderAudioPlayer(mediaSrc)}

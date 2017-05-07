@@ -10,7 +10,6 @@ class EntryView extends Component {
 
   render() {
     const {match, entrySelected, fetchMedia} = this.props;
-    console.log(this);
     return (
       <div>
         {entrySelected === null ? null :

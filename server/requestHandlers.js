@@ -2,7 +2,12 @@ const user = require('../database/models/users.js');
 const dbh = require('../database/db_helpers');
 
 module.exports.storeJobPosting = (req, res) => {
-  const details = req.body;
-  console.log('what are the details??123', details);
-  return dbh.
+  return dbh.storeJobPosting(req.body.params.postDetails)
+  .then(success => {
+    res.status(200).send(success);
+  })
+  .catch(err => {
+    consol.elog('RH: error in storeJobPosting', err);
+    res.status(500);
+  })
 }

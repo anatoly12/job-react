@@ -3,6 +3,7 @@ const path = require('path')
 const cors = require('express-cors')
 
 const app = express()
+const bodyParser = require('body-parser');
 
 const db = require('../database/db_config.js');
 const rh = require('./requestHandlers');
@@ -12,13 +13,15 @@ app.use(cors({
 }))
 
 app.use(express.static(__dirname + '/../client/dist'))
-
-app.get('*', function (req, res) {
-  res.sendFile(path.join(__dirname, '/../client/dist/index.html'))
-})
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/storeJobPosting', rh.storeJobPosting);
 
+app.get('*', function (req, res) {
+  res.sendFile(path.join(__dirname, '/../client/dist/index.html'))
+});
+
 app.listen(process.env.PORT || 3000, function () {
   console.log(`Server is listening on PORT ${process.env.port || 3000}`)
-})
+});

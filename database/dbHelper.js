@@ -21,3 +21,46 @@ exports.saveEntry = (req, res, log) => {
   .error(err => res.sendStatus(500).send(err))
   .catch(err => res.sendStatus(400).send(err));
 };
+
+exports.retrieveEntry = (query) => {
+  let user_id = query.user_id;
+  return new Promise((resolve, reject) => {
+    User.aggregate([
+      {$match: {user_id: user_id} },
+      {$unwind: '$entries'},
+      {$sort: {'entries.created_at': -1}},
+      {$limit: 20 },
+      {$project: {'entries._id': 1, 'entries.text': 1, 'entries.created_at': 1}},
+      {$group: {_id: '$_id', 'entries': {$push: '$entries'}}},
+      {$project: {'entries': '$entries'}},
+    ])
+    .then( results => {
+      if (results[0] === undefined) {
+        resolve(results);
+      } else {
+        resolve(results[0].entries);
+      }
+    })
+    .error((err) => {
+      reject(err);
+    });
+  });
+};
+
+exports.retrieveEntryMedia = (query) => {
+  let user_id = query.user_id;
+  let entryId = query.entryId;
+  return new Promise((resolve, reject) => {
+    User.find({user_id: user_id}, { entries: {$elemMatch: {_id: entryId}}, 'entries.audio': 1, 'entries._id': 1} )
+    .then( (results) => {
+      if (results[0] === undefined) {
+        throw 'no entries found with entryId';
+      } else {
+        resolve(results[0].entries);
+      }
+    })
+    .catch( err => {
+      reject(err);
+    });
+  });
+};

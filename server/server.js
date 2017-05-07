@@ -48,22 +48,51 @@ app.post('/storeJobPosting', rh.storeJobPosting);
 app.post('/entry', upload.single('media'), (req, res) => {
   if (req.body.text.length === 0) {
     res.sendStatus(400);
-  } else {
-    // if (req.body.phonenumber[0] !== '1') {
-    //   req.body.phonenumber = '1' + req.body.phonenumber;
-    // }
-    let log = {
-      // phonenumber: req.body.phonenumber,
-      user_id: req.body.user_id ? user_id : '123',
-      // entry_type: req.body.entryType,
-      audio: {
-        bucket: req.file ? req.file.bucket : null, // should be same as video later
-        key: req.file ? req.file.key : null,
-      },
-      text: req.body.text,
-    };
-    database.saveEntry(req, res, log);
   }
+  let log = {
+    user_id: req.body.user_id ? user_id : '123',
+    audio: {
+      bucket: req.file ? req.file.bucket : null,
+      key: req.file ? req.file.key : null,
+    },
+    text: req.body.text,
+  };
+  database.saveEntry(req, res, log);
+
+});
+
+app.post('/db/retrieveEntry', (req, res) => {
+  let query = {};
+  query.user_id = req.body.user_id ? req.body.user_id : '123';
+  database.retrieveEntry(query)
+  .then((results) => {
+    res.send(results);
+  })
+  .catch( err => {
+    console.error(err);
+  });
+});
+
+const getAWSSignedUrl = (bucket, key) => {
+  const params = {
+    Bucket: bucket,
+    Key: key
+  };
+  return s3.getSignedUrl('getObject', params);
+};
+
+app.get('/entry/:entryId', (req, res) => {
+  let query = {};
+  query.entryId = req.params.entryId;
+  query.user_id = '123';
+  database.retrieveEntryMedia(query)
+  .then( result => {
+    let key = result[0].audio.key;;
+    let bucket = result[0].audio.bucket;
+    let url = getAWSSignedUrl(bucket, key);
+    res.send(JSON.stringify(url));
+  })
+  .catch( err => res.sendStatus(400).send(err));
 });
 
 app.get('*', function (req, res) {

@@ -4,6 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import VoiceRecognition from './VoiceRecognition';
 import RecordRTC from 'recordrtc';
 import axios from 'axios';
+import EntryList from '../containers/entry-list/EntryList';
 
 export default class Call extends React.Component {
   static propTypes = {
@@ -133,7 +134,6 @@ export default class Call extends React.Component {
     });
   }
   render() {
-    console.log(this.state);
     if (this.state.prompt === 1) {
       return (
         <div>
@@ -151,7 +151,7 @@ export default class Call extends React.Component {
 
             />
           </MuiThemeProvider>
-
+          <EntryList />
         </div>
 
       );
@@ -181,6 +181,7 @@ export default class Call extends React.Component {
                 stop={this.state.stop}
               />}
           <p>{this.state.transcript}</p>
+          <EntryList />
         </div>
       );
 
@@ -199,6 +200,7 @@ export default class Call extends React.Component {
               }}
             />
           </MuiThemeProvider>
+          <EntryList />
         </div>
 
       );

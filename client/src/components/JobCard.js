@@ -53,6 +53,7 @@ export default class JobCard extends Component {
           modal={true}
           contentStyle={customContentStyle}
           open={this.state.open}
+          autoScrollBodyContent={true}
         >
 					This is JOB INFO component.
 					<JobInfo sample={sample}/>

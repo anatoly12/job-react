@@ -1,6 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { FlatButton, RaisedButton, Dialog } from 'material-ui';
-import TextField from 'material-ui/TextField';
+import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 
 const customContentStyle = {
   width: '100%',
@@ -47,24 +46,25 @@ export default class JobEntry extends Component {
           open={this.state.open}
         >
           <TextField
-            hintText="Hint Text"
+            hintText="Company Name"
             errorText="This field is required"
+            floatingLabelText="Company Name"
           /><br />
           <TextField
-            hintText="Hint Text"
-            errorText="The error text can be as long as you want, it will wrap."
-          /><br />
-          <TextField
-            hintText="Hint Text"
+            hintText="Job Title"
             errorText="This field is required"
-            floatingLabelText="Floating Label Text"
+            floatingLabelText="Job Title"
           /><br />
           <TextField
-            hintText="Message Field"
+            hintText="Job Description"
             errorText="This field is required."
-            floatingLabelText="MultiLine and FloatingLabel"
+            floatingLabelText="Job Description"
             multiLine={true}
-            rows={2}
+          /><br />
+          <TextField
+            hintText="Job Url"
+            errorText="This field is required"
+            floatingLabelText="Job Url"
           /><br />
         </Dialog>
       </div>

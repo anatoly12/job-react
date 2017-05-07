@@ -32,6 +32,7 @@ export default class Header extends React.Component {
         title="RubberDuckies"
         iconClassNameRight="muidocs-icon-navigation-expand-more"
         onLeftIconButtonTouchTap={this.handleToggle}
+        style={{backgroundColor: '#1C202C'}}
         />
         <Drawer
           docked={false}

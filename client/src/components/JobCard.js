@@ -10,9 +10,7 @@ const propTypes = {
 };
 
 const customContentStyle = {
-	// TODO: Discuss with team to check what style we want
-  width: '100%',
-  maxWidth: 'none',
+  maxWidth: 600,
 };
 
 export default class JobCard extends Component {

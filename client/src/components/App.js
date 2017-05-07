@@ -24,8 +24,8 @@ const store = createStoreWithMiddleware(reducers);
 
 const style = {
   position: 'absolute',
-  right: 20,
-  bottom: 20,
+  right: 40,
+  bottom: 40,
 };
 
 class App extends Component {

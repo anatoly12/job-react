@@ -3,8 +3,7 @@ import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 import util from '../../lib/util';
 
 const customContentStyle = {
-  width: '100%',
-  maxWidth: 'none',
+  maxWidth: 600,
 };
 
 export default class JobEntry extends Component {

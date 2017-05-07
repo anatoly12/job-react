@@ -103,52 +103,27 @@ export default class Call extends React.Component {
   }
 
   uploadAudio() {
-    this.setState({
-      uploading: true,
-      uploadError: false,
-      uploadSuccess: false
-    });
     let blob = this.state.blob;
     let fd = new FormData();
     fd.append('media', blob);
-    fd.append('entryType', 'audio');
     fd.append('text', this.state.transcript);
-    fd.append('user_id', localStorage.user_id);
-    fd.append('phonenumber', JSON.parse(localStorage.smsCred).phoneNumber.number);
-
     const config = {
       headers: { 'content-type': 'multipart/form-data' }
     };
     axios.post('/entry', fd, config)
     .then( res => {
-      this.setState({
-        uploading: false,
-        uploadSuccess: true,
-        uploadError: false,
-        transcript: '' });
+      console.log('Successful upload!');
     })
     .catch(err => {
-      this.setState({
-        uploading: false,
-        uploadSuccess: false,
-        uploadError: true
-      });
+      console.log('Error uploading...');
     });
   }
 
   onEnd() {
-    if (this.state.transcript.length > 0) {
-      this.setState({
-        start: false,
-        stop: false
-      });
-    } else {
-      this.setState({
-        start: false,
-        stop: false,
-        noTranscript: true
-      });
-    }
+    this.setState({
+      start: false,
+      stop: false
+    });
   }
 
   onResult ({ finalTranscript }) {
@@ -188,6 +163,13 @@ export default class Call extends React.Component {
             <RaisedButton
               label="Stop"
               onTouchTap={this.stopRecord}
+            />
+
+          </MuiThemeProvider>
+          <MuiThemeProvider>
+            <RaisedButton
+              label="Upload"
+              onTouchTap={this.uploadAudio}
             />
           </MuiThemeProvider>
             {this.state.start &&

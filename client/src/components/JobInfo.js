@@ -13,7 +13,7 @@ const JobInfo = (jobPost) => {
           preferred_qualifications,
           location,
           posted_date,
-          posted_url,
+          post_url,
         } = jobPost;
   return (
     <div>

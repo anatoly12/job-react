@@ -3,8 +3,7 @@ import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 import util from '../../lib/util';
 
 const customContentStyle = {
-  width: '100%',
-  maxWidth: 'none',
+  maxWidth: 600,
 };
 
 export default class JobEntry extends Component {
@@ -42,7 +41,7 @@ export default class JobEntry extends Component {
 
 	handleClose = (e) => {
     e.preventDefault();
-		this.setState({ open: false });
+		this.props.handleDialog();
 	}
 
   handleBoardName = (e) => { this.setState({ boardName: e.target.value }) };
@@ -60,6 +59,7 @@ export default class JobEntry extends Component {
   }
 
   render() {
+    const {open , handleDialog} = this.props;
     const actions = [
 			// TODO: Consider to take out cancel, or click shaded area to cancel
       <FlatButton
@@ -73,18 +73,18 @@ export default class JobEntry extends Component {
       <FlatButton
         label="Cancel"
         primary={true}
-        onTouchTap={this.handleClose}
+        onTouchTap={handleDialog}
       />,
     ];
     return (
       <div>
-        <RaisedButton label="Save Job Posting" onTouchTap={this.handleOpen} />
         <Dialog
           title="Job Info"
           actions={actions}
           modal={true}
           contentStyle={customContentStyle}
-          open={this.state.open}
+          open={open}
+          autoScrollBodyContent={true}
         >
           <TextField
             hintText="Board"

@@ -6,7 +6,7 @@ const propTypes = {
 };
 
 const JobInfo = (sample) => {
-  const { company,
+  const { company_name,
           job_title,
           job_description,
           basic_qualifications,
@@ -18,7 +18,7 @@ const JobInfo = (sample) => {
   return (
     <div>
       <h1>Title</h1>
-      { job_title } at { company }
+      { job_title } at { company_name }
       <h1>Location</h1>
       { location }
       <h1>Description</h1>

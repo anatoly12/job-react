@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
+import util from '../../lib/util';
 
 const customContentStyle = {
   width: '100%',
@@ -7,30 +8,57 @@ const customContentStyle = {
 };
 
 export default class JobEntry extends Component {
-	// TODO: Rename state to avoid duplication with JobEntry.jsx
-	state = {
-		open: false,
-	};
+  constructor(props) {
+    super(props);
+    // TODO: Rename state to avoid duplication with JobEntry.jsx
+    this.state = {
+      open: false,
+      companyName: '',
+      job_title: '',
+      job_description: '',
+      basic_qualifications: '',
+      preferred_qualifications: '',
+      location: '',
+      post_url: '',
+    };
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleCompanyNameChange = this.handleCompanyNameChange.bind(this);
+    this.onNewJobPostingSave = this.onNewJobPostingSave.bind(this);
+  }
 
 	// TODO: Rename handleOpen and handleClose functions to avoid duplication with JobEntry.jsx
 	handleOpen = () => {
 		this.setState({ open: true });
 	};
 
-	handleClose = () => {
+	handleClose = (e) => {
+    e.preventDefault();
 		this.setState({ open: false });
 	}
+
+  handleCompanyNameChange = (e) => {
+    this.setState({ companyName: e.target.value });
+  }
+
+  onNewJobPostingSave = (e) => {
+    e.preventDefault();
+    util.submitNewJobPosting(this.state.companyName);
+  }
 
   render() {
     const actions = [
 			// TODO: Consider to take out cancel, or click shaded area to cancel
       <FlatButton
-        label="Cancel"
+        label="Save"
         primary={true}
-        onTouchTap={this.handleClose}
+        onTouchTap={(e) => {
+         this.handleClose(e);
+         this.onNewJobPostingSave(e);
+        }}
       />,
       <FlatButton
-        label="Save"
+        label="Cancel"
         primary={true}
         onTouchTap={this.handleClose}
       />,
@@ -49,6 +77,8 @@ export default class JobEntry extends Component {
             hintText="Company Name"
             errorText="This field is required"
             floatingLabelText="Company Name"
+            value={this.state.companyName}
+            onChange={this.handleCompanyNameChange}
           /><br />
           <TextField
             hintText="Job Title"

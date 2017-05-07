@@ -1,6 +1,6 @@
 module.exports = {
   sampleJob1: {
-    company: 'Amazon Corporate LLC',
+    company_name: 'Amazon Corporate LLC',
     job_title: 'Software Development Engineer, New AWS/Alexa Service',
     job_description: [
       'Alexa and AWS are the two hottest technologies being talked about. How would you like to work on both—at the same time? The Amazon Web Services’ Enterprise Apps team is defining the next big step in a truly digital workspace at the junction of Alexa and AWS and will deliver never before seen levels of user experiences.',

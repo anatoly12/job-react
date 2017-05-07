@@ -1,6 +1,11 @@
 import React from 'react';
+<<<<<<< HEAD
 import { Link } from 'react-router-dom'
 
+||||||| merged common ancestors
+
+=======
+>>>>>>> (fix) Fix merge routes
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';

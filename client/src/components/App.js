@@ -11,6 +11,7 @@ import Board from './Board';
 import Call from './Call';
 import JobCard from './JobCard';
 import JobEntry from './JobEntry';
+import FloatingButton from './FloatingButton';
 
 export default class App extends Component {
   constructor (props) {
@@ -33,6 +34,7 @@ export default class App extends Component {
             <Route path="/job-entry" component={JobEntry}/>
           </div>
         </Router>
+        {/*<FloatingButton />*/}
       </MuiThemeProvider>
     )
   }

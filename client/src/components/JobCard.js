@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import JobInfo from './JobInfo';
-import jobPost from '../../../database/sampleData.js';
+import sample from '../../../database/sampleData.js';
 import { FlatButton, RaisedButton, Dialog } from 'material-ui';
 
 const propTypes = {
@@ -21,11 +21,11 @@ export default class JobCard extends Component {
 
 	// TODO: Rename handleOpen and handleClose functions to avoid duplication with JobEntry.jsx
 	handleOpen = () => {
-		this.setState({open: true});
+		this.setState({ open: true });
 	};
 
 	handleClose = () => {
-		this.setState({open: false});
+		this.setState({ open: false });
 	};
 
 	render() {
@@ -53,7 +53,7 @@ export default class JobCard extends Component {
           open={this.state.open}
         >
 					This is JOB INFO component.
-					<JobInfo jobPost={jobPost}/>
+					<JobInfo sample={sample}/>
         </Dialog>
 			</div>
 		);

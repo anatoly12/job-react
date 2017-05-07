@@ -59,7 +59,7 @@ export default class InterviewTab extends Component {
     return (
       <div>
         <br />
-        <h1>InterviewTab!</h1>
+        <h1>Enter your interview date/time:</h1>
         <DatePicker
           hintText="Date of Interview"
           value={this.state.interviewDate} 

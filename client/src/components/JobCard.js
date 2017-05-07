@@ -21,11 +21,11 @@ export default class JobCard extends Component {
 
 	// TODO: Rename handleOpen and handleClose functions to avoid duplication with JobEntry.jsx
 	handleOpen = () => {
-		this.setState({open: true});
+		this.setState({ open: true });
 	};
 
 	handleClose = () => {
-		this.setState({open: false});
+		this.setState({ open: false });
 	};
 
 	render() {

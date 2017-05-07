@@ -3,11 +3,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { BrowserRouter as Router, Route, Link} from 'react-router-dom'
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link
-} from 'react-router-dom'
 import { Provider } from 'react-redux';
 import Header from './Header'
 import Home from './Home'

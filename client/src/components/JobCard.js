@@ -3,6 +3,8 @@ import JobInfo from './JobInfo';
 import sample from '../../../database/sampleData.js';
 import { FlatButton, RaisedButton, Dialog } from 'material-ui';
 
+import InterviewTab from './InterviewTab';
+
 const propTypes = {
 
 };
@@ -54,6 +56,7 @@ export default class JobCard extends Component {
         >
 					This is JOB INFO component.
 					<JobInfo sample={sample}/>
+          <InterviewTab />
         </Dialog>
 			</div>
 		);

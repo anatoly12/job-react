@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
@@ -38,8 +39,26 @@ export default class Header extends React.Component {
           open={this.state.open}
           onRequestChange={(open) => this.setState({open})}
         >
-          <MenuItem onTouchTap={this.handleClose}>Job Board</MenuItem>
-          <MenuItem onTouchTap={this.handleClose}>Alexa Call</MenuItem>
+          <MenuItem 
+          onTouchTap={this.handleClose}
+          containerElement={<Link to="/board" />}
+          primaryText="Job Board"
+          />
+          <MenuItem 
+            onTouchTap={this.handleClose}
+            containerElement={<Link to="/call" />}
+            primaryText="Call"
+          />
+          <MenuItem 
+            onTouchTap={this.handleClose}
+            containerElement={<Link to="/job-card" />}
+            primaryText="Job Card"
+          />
+          <MenuItem 
+            onTouchTap={this.handleClose}
+            containerElement={<Link to="/job-entry" />}
+            primaryText="Job Entry"
+          />
         </Drawer>
       </div>
     );

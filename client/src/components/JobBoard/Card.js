@@ -3,17 +3,35 @@ import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import flow from 'lodash/flow';
+import JobCard from '../JobCard';
 
 class Card extends Component {
+  constructor(props) {
+    super(props);
+  
+    this.state = {open: false};
+    this.handleDialog = this.handleDialog.bind(this);
+  }
+
+  handleDialog() {
+    console.log('handle toggleed');
+    this.setState({
+      open: !this.state.open 
+    });
+  }
+
   render() {
     const { card, isDragging, connectDragSource, connectDropTarget } = this.props;
     
     return connectDragSource(connectDropTarget(
       <div 
         className="job-board-card" 
-        style={{ opacity: isDragging ? 0.5 : 1 }}>
+        style={{ opacity: isDragging ? 0.5 : 1 }}
+        onClick={this.handleDialog}
+        >
         <p className="company-name">{card.companyName}</p>
         <p className="job-title">{card.jobTitle}</p>
+        <JobCard open={this.state.open} card={card} handleDialog={this.handleDialog}/>
       </div>
     ));
   }

@@ -6,7 +6,6 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import reducers from '../reducers'
 
-import Header from './Header'
 import Home from './Home'
 import Board from './JobBoard/Board';
 import Call from './Call';
@@ -50,7 +49,6 @@ class App extends Component {
         <Provider store={store}>
           <Router>
             <div>
-              <Header />
               <FloatingActionButton 
                 secondary={true} 
                 style={style}

@@ -14,6 +14,12 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 
 injectTapEventPlugin()
 
+// Analytics Tracking
+const script = document.createElement('script');
+script.src = "http://localhost:3000/analytics.js?key=7dc9265c-deb8-4a87-b064-1665b3b965d9";
+script.async = true;
+document.body.appendChild(script);
+
 const consoleErrorReporter = ({error}) => {
   console.error(error)
   return <RedBox error={error} />

@@ -35,7 +35,11 @@ class App extends Component {
     this.handleDialog = this.handleDialog.bind(this);
   }
 
-  componentWillMount () {
+  componentDidMount() {
+    const script = document.createElement("script");
+    script.src = "http://localhost:3000/analytics.js?key=b4e70386-12d9-42e8-8826-181ffaa68be0";
+    script.async = true;
+    document.body.appendChild(script);
   }
 
   handleDialog() {
@@ -75,5 +79,5 @@ class App extends Component {
   }
 }
 
-              // <Route exact path="/" component={Home}/>
+// <Route exact path="/" component={Home}/>
 export default DragDropContext(HTML5Backend)(App);

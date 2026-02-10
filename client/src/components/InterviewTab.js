@@ -1,9 +1,9 @@
 import React, { PropTypes, Component } from 'react';
-
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
+import Analytics from '../../utils/analytics';
 
 export default class InterviewTab extends Component {
   constructor(props) {
@@ -28,18 +28,21 @@ export default class InterviewTab extends Component {
   }
 
   submitInterviewTime () {
+    Analytics.trackEvent('Interview Scheduled', {
+      date: this.state.interviewDate,
+      time: this.state.interviewTime,
+      timestamp: new Date()
+    });
+
     console.log('submitting interview time');
     console.log('interviewDate: ', this.state.interviewDate);
     console.log('interviewTime: ', this.state.interviewTime);
-    // add a day
+
     const {interviewDate, interviewTime} = this.state;
     interviewDate.setDate(interviewDate.getDate() - 1);
-    // Add 1 week to date
+
     var followUpDate = new Date();
     followUpDate.setDate(interviewDate.getDate() + 5);
-
-    // Reminder date is 1 day after
-    // console.log('reminderDate: ', reminderDate);
 
     axios.post('/setReminder', {
       reminderDate: interviewDate,
@@ -47,7 +50,6 @@ export default class InterviewTab extends Component {
       followUpDate: followUpDate
     })
     .then(function (response) {
-      // TODO: Show snackbar as confirmation of reminder
       console.log(response);
     })
     .catch(function (error) {

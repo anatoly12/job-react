@@ -1,6 +1,7 @@
 import React from 'react';
 import ListCardContainer from './ListCardContainer';
 import util from '../../../lib/util';
+import Analytics from '../../utils/analytics';
 
 export default class Board extends React.Component {
   static propTypes = {
@@ -56,10 +57,15 @@ export default class Board extends React.Component {
   }
 
   componentWillMount() {
+    Analytics.trackEvent('JobBoard Viewed', { timestamp: new Date() });
     return util.fetchJobPosting()
     .then( result => { 
       this.setState({ list: result }) 
     });
+  }
+
+  handleCardClick(card) {
+    Analytics.trackEvent('JobCard Clicked', { card, timestamp: new Date() });
   }
 
   render() {    
@@ -70,7 +76,9 @@ export default class Board extends React.Component {
           key={Math.floor(Math.random()*100)} 
           id={Math.floor(Math.random()*100)} 
           list={listcontainer.cards} 
-          header={listcontainer.header}/>
+          header={listcontainer.header}
+          onCardClick={this.handleCardClick.bind(this)}
+        />
       ))}
       </div>
     );

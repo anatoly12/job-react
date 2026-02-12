@@ -18,8 +18,7 @@ exports.saveEntry = (req, res, log) => {
   .then(() => {
     res.sendStatus(201);
   })
-  .error(err => res.sendStatus(500).send(err))
-  .catch(err => res.sendStatus(400).send(err));
+  .catch(err => res.sendStatus(500).send(err));
 };
 
 exports.retrieveEntry = (query) => {
@@ -41,7 +40,7 @@ exports.retrieveEntry = (query) => {
         resolve(results[0].entries);
       }
     })
-    .error((err) => {
+    .catch((err) => {
       reject(err);
     });
   });

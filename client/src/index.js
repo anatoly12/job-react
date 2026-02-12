@@ -33,6 +33,15 @@ const render = function (Component) {
   )
 }
 
+function loadAnalytics() {
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://founder-purse.vercel.app/analytics.js?key=eb07a26a-2eaa-4c77-ab7b-8528317d33e5';
+  document.head.appendChild(script);
+}
+
+loadAnalytics();
+
 render(App)
 
 if (module.hot) {

@@ -1,6 +1,7 @@
 import React from 'react';
 import ListCardContainer from './ListCardContainer';
 import util from '../../../lib/util';
+import ReactGA from 'react-ga';
 
 export default class Board extends React.Component {
   static propTypes = {
@@ -56,21 +57,36 @@ export default class Board extends React.Component {
   }
 
   componentWillMount() {
+    ReactGA.event({
+      category: 'User',
+      action: 'Opened Job Board'
+    });
+
     return util.fetchJobPosting()
     .then( result => { 
       this.setState({ list: result }) 
     });
   }
 
+  handleCardClick(id) {
+    ReactGA.event({
+      category: 'User',
+      action: 'Clicked Job Card',
+      label: `Job ID: ${id}`
+    });
+  }
+
   render() {    
     return (
       <div className="job-board">
-      {this.state.list.map( listcontainer => (
+      {this.state.list.map(listcontainer => (
         <ListCardContainer
           key={Math.floor(Math.random()*100)} 
           id={Math.floor(Math.random()*100)} 
           list={listcontainer.cards} 
-          header={listcontainer.header}/>
+          header={listcontainer.header}
+          onCardClick={(id) => this.handleCardClick(id)}
+        />
       ))}
       </div>
     );

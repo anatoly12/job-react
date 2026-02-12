@@ -1,12 +1,14 @@
 import React, { PropTypes, Component } from 'react';
 import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 import util from '../../lib/util';
+import { connect } from 'react-redux';
+import { analyticsEvent } from '../actions/index';
 
 const customContentStyle = {
   maxWidth: 600,
 };
 
-export default class JobEntry extends Component {
+class JobEntry extends Component {
   constructor(props) {
     super(props);
     // TODO: Rename state to avoid duplication with JobEntry.jsx
@@ -34,15 +36,15 @@ export default class JobEntry extends Component {
     this.onNewJobPostingSave = this.onNewJobPostingSave.bind(this);
   }
 
-	// TODO: Rename handleOpen and handleClose functions to avoid duplication with JobEntry.jsx
-	handleOpen = () => {
-		this.setState({ open: true });
-	};
+  // TODO: Rename handleOpen and handleClose functions to avoid duplication with JobEntry.jsx
+  handleOpen = () => {
+    this.setState({ open: true });
+  };
 
-	handleClose = (e) => {
+  handleClose = (e) => {
     e.preventDefault();
-		this.props.handleDialog();
-	}
+    this.props.handleDialog();
+  }
 
   handleBoardName = (e) => { this.setState({ boardName: e.target.value }) };
   handleCompanyNameChange = (e) => { this.setState({ companyName: e.target.value }) };
@@ -55,13 +57,14 @@ export default class JobEntry extends Component {
   
   onNewJobPostingSave = (e) => {
     e.preventDefault();
+    const { boardName, companyName, jobTitle, jobUrl } = this.state;
     util.submitNewJobPosting(this.state);
+    this.props.dispatch(analyticsEvent('JOB_ENTRY_SUBMITTED', { boardName, companyName, jobTitle, jobUrl }));
   }
 
   render() {
     const {open , handleDialog} = this.props;
     const actions = [
-			// TODO: Consider to take out cancel, or click shaded area to cancel
       <FlatButton
         label="Save"
         primary={true}
@@ -151,3 +154,5 @@ export default class JobEntry extends Component {
     )
   }  
 }
+
+export default connect()(JobEntry);

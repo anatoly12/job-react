@@ -7,7 +7,7 @@ module.exports.storeJobPosting = (req, res) => {
     res.status(200).send(success);
   })
   .catch(err => {
-    consol.elog('RH: error in storeJobPosting', err);
+    console.error('RH: error in storeJobPosting', err);
     res.status(500);
   })
 }
@@ -18,7 +18,7 @@ module.exports.getJobPosting = (req, res) => {
     res.status(200).send(success);
   })
   .catch(err => {
-    consol.elog('RH: error in storeJobPosting', err);
+    console.error('RH: error in storeJobPosting', err);
     res.status(500);
   })
 }

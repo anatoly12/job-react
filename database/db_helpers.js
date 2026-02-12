@@ -10,14 +10,16 @@ module.exports.storeJobPosting = (postDetails) => {
   return JobPost(postDetails).saveAsync()
   .catch(err => {
     console.log('DBH: err storing job posting', err);
+    throw err;
   })
 }
 
 module.exports.getJobPosting = (userInfo) => {
   //connect with userInfo Auth later
   return JobPost.find()
-  .then( result => result)
+  .then(result => result)
   .catch(err => {
-    console.log('DBH: err storing job posting', err);
+    console.log('DBH: err retrieving job posting', err);
+    throw err;
   })
 }

@@ -8,6 +8,7 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 const s3 = new AWS.S3();
 const database = require('../database/dbHelper');
+const helmet = require('helmet');
 
 const upload = multer({
   storage: multerS3({
@@ -32,6 +33,7 @@ const app = express();
 const db = require('../database/db_config.js');
 const rh = require('./requestHandlers');
 
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('morgan')('dev'));

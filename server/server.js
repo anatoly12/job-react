@@ -23,7 +23,7 @@ const upload = multer({
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: 'us-west-1'
+  region: process.env.AWS_REGION
 });
 
 var axios = require('axios')
@@ -127,7 +127,7 @@ app.post('/setReminder', function (req, res) {
     url: 'https://api.sparkpost.com/api/v1/transmissions',
     headers: {
       'content-type': 'application/json',
-      'authorization': '0526b81c29cb593ff22fd28413a1e139eedbb0ac'
+      'authorization': process.env.SPARKPOST_API_KEY
     },
     data: {
       "options":{"open_tracking":true,"click_tracking":true,"start_time": thankYouTime},
@@ -165,7 +165,7 @@ app.post('/setReminder', function (req, res) {
     url: 'https://api.sparkpost.com/api/v1/transmissions',
     headers: {
       'content-type': 'application/json',
-      'authorization': '0526b81c29cb593ff22fd28413a1e139eedbb0ac'
+      'authorization': process.env.SPARKPOST_API_KEY
     },
     data: {
       "options":{"open_tracking":true,"click_tracking":true,"start_time": followUpTime},

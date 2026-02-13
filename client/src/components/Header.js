@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
 
 import AppBar from 'material-ui/AppBar';
@@ -7,7 +8,7 @@ import MenuItem from 'material-ui/MenuItem';
 
 export default class Header extends React.Component {
   static propTypes = {
-    name: React.PropTypes.string,
+    name: PropTypes.string,
   };
 
   constructor(props) {

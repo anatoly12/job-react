@@ -1,9 +1,5 @@
-import React, { PropTypes, Component } from 'react';
-import Dialog from 'material-ui/Dialog';
-
-const propTypes = {
-  card: PropTypes.object.isRequired,
-};
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const JobInfo = ({card}) => {
   return (
@@ -23,5 +19,9 @@ const JobInfo = ({card}) => {
     </div>
   )
 }
+
+JobInfo.propTypes = {
+  card: PropTypes.object.isRequired,
+};
 
 export default JobInfo;

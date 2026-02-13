@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 import util from '../../lib/util';
 
@@ -7,6 +8,11 @@ const customContentStyle = {
 };
 
 export default class JobEntry extends Component {
+  static propTypes = {
+    handleDialog: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+  };
+
   constructor(props) {
     super(props);
     // TODO: Rename state to avoid duplication with JobEntry.jsx

@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import ItemTypes from './ItemTypes';
@@ -12,6 +13,17 @@ class Card extends Component {
     this.state = {open: false};
     this.handleDialog = this.handleDialog.bind(this);
   }
+
+  static propTypes = {
+    card: PropTypes.object.isRequired,
+    isDragging: PropTypes.bool.isRequired,
+    connectDragSource: PropTypes.func.isRequired,
+    connectDropTarget: PropTypes.func.isRequired,
+    index: PropTypes.number.isRequired,
+    listId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    removeCard: PropTypes.func.isRequired,
+    moveCard: PropTypes.func.isRequired,
+  };
 
   handleDialog() {
     console.log('handle toggleed');

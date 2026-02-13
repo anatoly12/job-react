@@ -20,6 +20,16 @@ export default class JobEntry extends Component {
       preferredQualifications: '',
       location: '',
       jobUrl: '',
+      errors: {
+        boardName: '',
+        companyName: '',
+        jobTitle: '',
+        jobDescription: '',
+        basicQualifications: '',
+        preferredQualifications: '',
+        location: '',
+        jobUrl: '',
+      },
     };
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -39,36 +49,145 @@ export default class JobEntry extends Component {
 		this.setState({ open: true });
 	};
 
-	handleClose = (e) => {
+  handleClose = (e) => {
     e.preventDefault();
-		this.props.handleDialog();
-	}
+    this.props.handleDialog();
+  }
 
-  handleBoardName = (e) => { this.setState({ boardName: e.target.value }) };
-  handleCompanyNameChange = (e) => { this.setState({ companyName: e.target.value }) };
-  handleJobTitleChange = (e) => { this.setState({ jobTitle: e.target.value }) };
-  handleJobDescriptionChange = (e) => { this.setState({ jobDescription: e.target.value }) };
-  handleBasicQualificationsChange = (e) => { this.setState({ basicQualifications: e.target.value }) };
-  handlePreferredQualificationsChange = (e) => { this.setState({ preferredQualifications: e.target.value }) };
-  handleLocationChange = (e) => { this.setState({ location: e.target.value }) };
-  handleJobUrlChange = (e) => { this.setState({ jobUrl: e.target.value }) };
-  
-  onNewJobPostingSave = (e) => {
+  handleBoardName = (e) => {
+    const value = e.target.value;
+    this.setState(prevState => ({
+      boardName: value,
+      errors: { ...prevState.errors, boardName: '' },
+    }));
+  };
+
+  handleCompanyNameChange = (e) => {
+    const value = e.target.value;
+    this.setState(prevState => ({
+      companyName: value,
+      errors: { ...prevState.errors, companyName: '' },
+    }));
+  };
+
+  handleJobTitleChange = (e) => {
+    const value = e.target.value;
+    this.setState(prevState => ({
+      jobTitle: value,
+      errors: { ...prevState.errors, jobTitle: '' },
+    }));
+  };
+
+  handleJobDescriptionChange = (e) => {
+    const value = e.target.value;
+    this.setState(prevState => ({
+      jobDescription: value,
+      errors: { ...prevState.errors, jobDescription: '' },
+    }));
+  };
+
+  handleBasicQualificationsChange = (e) => {
+    const value = e.target.value;
+    this.setState(prevState => ({
+      basicQualifications: value,
+      errors: { ...prevState.errors, basicQualifications: '' },
+    }));
+  };
+
+  handlePreferredQualificationsChange = (e) => {
+    const value = e.target.value;
+    this.setState(prevState => ({
+      preferredQualifications: value,
+      errors: { ...prevState.errors, preferredQualifications: '' },
+    }));
+  };
+
+  handleLocationChange = (e) => {
+    const value = e.target.value;
+    this.setState(prevState => ({
+      location: value,
+      errors: { ...prevState.errors, location: '' },
+    }));
+  };
+
+  handleJobUrlChange = (e) => {
+    const value = e.target.value;
+    this.setState(prevState => ({
+      jobUrl: value,
+      errors: { ...prevState.errors, jobUrl: '' },
+    }));
+  };
+
+  validateFields = () => {
+    const requiredFieldMessages = {
+      boardName: 'This field is required',
+      companyName: 'This field is required',
+      jobTitle: 'This field is required',
+      jobDescription: 'This field is required.',
+      basicQualifications: 'This field is required.',
+      preferredQualifications: 'This field is required.',
+      location: 'This field is required.',
+      jobUrl: 'This field is required',
+    };
+
+    const errors = { ...this.state.errors };
+    let isValid = true;
+
+    Object.keys(requiredFieldMessages).forEach((field) => {
+      if ((this.state[field] || '').trim()) {
+        errors[field] = '';
+      } else {
+        errors[field] = requiredFieldMessages[field];
+        isValid = false;
+      }
+    });
+
+    this.setState({ errors });
+    return isValid;
+  }
+
+  handleSave = (e) => {
     e.preventDefault();
-    util.submitNewJobPosting(this.state);
+    if (!this.validateFields()) {
+      return;
+    }
+    this.props.handleDialog();
+    this.onNewJobPostingSave();
+  }
+
+  onNewJobPostingSave = () => {
+    const {
+      boardName,
+      companyName,
+      jobTitle,
+      jobDescription,
+      basicQualifications,
+      preferredQualifications,
+      location,
+      jobUrl,
+    } = this.state;
+
+    util.submitNewJobPosting({
+      boardName,
+      companyName,
+      jobTitle,
+      jobDescription,
+      basicQualifications,
+      preferredQualifications,
+      location,
+      jobUrl,
+    });
   }
 
   render() {
     const {open , handleDialog} = this.props;
+    const { errors } = this.state;
     const actions = [
 			// TODO: Consider to take out cancel, or click shaded area to cancel
       <FlatButton
         label="Save"
         primary={true}
-        onTouchTap={(e) => {
-         this.handleClose(e);
-         this.onNewJobPostingSave(e);
-        }}
+        onTouchTap={this.handleSave}
       />,
       <FlatButton
         label="Cancel"
@@ -88,28 +207,28 @@ export default class JobEntry extends Component {
         >
           <TextField
             hintText="Board"
-            errorText="This field is required"
+            errorText={errors.boardName}
             floatingLabelText="Board Name"
             value={this.state.boardName}
             onChange={this.handleBoardName}
           /><br />
           <TextField
             hintText="Company Name"
-            errorText="This field is required"
+            errorText={errors.companyName}
             floatingLabelText="Company Name"
             value={this.state.companyName}
             onChange={this.handleCompanyNameChange}
           /><br />
           <TextField
             hintText="Job Title"
-            errorText="This field is required"
+            errorText={errors.jobTitle}
             floatingLabelText="Job Title"
             value={this.state.jobTitle}
             onChange={this.handleJobTitleChange}
           /><br />
           <TextField
             hintText="Job Description"
-            errorText="This field is required."
+            errorText={errors.jobDescription}
             floatingLabelText="Job Description"
             multiLine={true}
             value={this.state.jobDescription}
@@ -117,7 +236,7 @@ export default class JobEntry extends Component {
           /><br />
           <TextField
             hintText="Basic Qualifications"
-            errorText="This field is required."
+            errorText={errors.basicQualifications}
             floatingLabelText="Basic Qualifications"
             multiLine={true}
             value={this.state.basicQualifications}
@@ -125,7 +244,7 @@ export default class JobEntry extends Component {
           /><br />     
           <TextField
             hintText="Preferred Qualifications"
-            errorText="This field is required."
+            errorText={errors.preferredQualifications}
             floatingLabelText="Preferred Qualifications"
             multiLine={true}
             value={this.state.preferredQualifications}
@@ -133,7 +252,7 @@ export default class JobEntry extends Component {
           /><br />  
           <TextField
             hintText="Location"
-            errorText="This field is required."
+            errorText={errors.location}
             floatingLabelText="Location"
             multiLine={true}
             value={this.state.location}
@@ -141,7 +260,7 @@ export default class JobEntry extends Component {
           /><br />  
           <TextField
             hintText="Job Url"
-            errorText="This field is required"
+            errorText={errors.jobUrl}
             floatingLabelText="Job Url"
             value={this.state.jobUrl}
             onChange={this.handleJobUrlChange}

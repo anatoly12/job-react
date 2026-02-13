@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 import util from '../../lib/util';
+import analytics from '../../lib/analytics';
 
 const customContentStyle = {
   maxWidth: 600,
@@ -31,7 +32,6 @@ export default class JobEntry extends Component {
     this.handlePreferredQualificationsChange = this.handlePreferredQualificationsChange.bind(this);
     this.handleLocationChange = this.handleLocationChange.bind(this);
     this.handleJobUrlChange = this.handleJobUrlChange.bind(this);
-    this.onNewJobPostingSave = this.onNewJobPostingSave.bind(this);
   }
 
 	// TODO: Rename handleOpen and handleClose functions to avoid duplication with JobEntry.jsx
@@ -39,10 +39,23 @@ export default class JobEntry extends Component {
 		this.setState({ open: true });
 	};
 
-	handleClose = (e) => {
-    e.preventDefault();
+	handleClose = (e, reason = 'cancel') => {
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
+
+    if (reason === 'cancel') {
+      analytics.trackJobPostingFlowCancelled(this.getJobDetails());
+    }
+
 		this.props.handleDialog();
 	}
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.open && this.props.open) {
+      analytics.trackJobPostingFlowOpened(this.getJobDetails());
+    }
+  }
 
   handleBoardName = (e) => { this.setState({ boardName: e.target.value }) };
   handleCompanyNameChange = (e) => { this.setState({ companyName: e.target.value }) };
@@ -53,27 +66,67 @@ export default class JobEntry extends Component {
   handleLocationChange = (e) => { this.setState({ location: e.target.value }) };
   handleJobUrlChange = (e) => { this.setState({ jobUrl: e.target.value }) };
   
-  onNewJobPostingSave = (e) => {
-    e.preventDefault();
-    util.submitNewJobPosting(this.state);
+  getJobDetails = () => {
+    const {
+      boardName,
+      companyName,
+      jobTitle,
+      jobDescription,
+      basicQualifications,
+      preferredQualifications,
+      location,
+      jobUrl,
+    } = this.state;
+
+    return {
+      boardName,
+      companyName,
+      jobTitle,
+      jobDescription,
+      basicQualifications,
+      preferredQualifications,
+      location,
+      jobUrl,
+    };
+  };
+
+  onNewJobPostingSave = () => {
+    const jobDetails = this.getJobDetails();
+
+    analytics.trackJobPostingFlowSubmitted(jobDetails);
+
+    return util.submitNewJobPosting(jobDetails)
+      .then(() => analytics.trackJobPostingFlowSucceeded(jobDetails))
+      .catch((error) => {
+        analytics.trackJobPostingFlowFailed(error, jobDetails);
+        throw error;
+      });
+  }
+
+  handleSave = (e) => {
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
+
+    const submission = this.onNewJobPostingSave();
+    this.handleClose(null, 'save');
+
+    return submission;
   }
 
   render() {
-    const {open , handleDialog} = this.props;
+    const { open } = this.props;
     const actions = [
 			// TODO: Consider to take out cancel, or click shaded area to cancel
       <FlatButton
         label="Save"
         primary={true}
-        onTouchTap={(e) => {
-         this.handleClose(e);
-         this.onNewJobPostingSave(e);
-        }}
+        onTouchTap={this.handleSave}
       />,
       <FlatButton
         label="Cancel"
         primary={true}
-        onTouchTap={handleDialog}
+        onTouchTap={(e) => this.handleClose(e, 'cancel')}
       />,
     ];
     return (

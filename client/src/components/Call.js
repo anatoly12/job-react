@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import VoiceRecognition from './VoiceRecognition';
@@ -8,7 +9,7 @@ import EntryList from '../containers/entry-list/EntryList';
 
 export default class Call extends React.Component {
   static propTypes = {
-    name: React.PropTypes.string,
+    name: PropTypes.string,
   };
 
   constructor(props) {

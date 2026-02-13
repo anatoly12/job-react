@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
+import PropTypes from 'prop-types'
 
 /* * Utils * */
 import 'react-hot-loader/patch'
@@ -20,7 +21,7 @@ const consoleErrorReporter = ({error}) => {
 }
 
 consoleErrorReporter.propTypes = {
-  error: React.PropTypes.instanceOf(Error).isRequired
+  error: PropTypes.instanceOf(Error).isRequired
 }
 
 /* * wrapping App.js in Proivder component to allow access to our redux store * */

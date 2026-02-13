@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';

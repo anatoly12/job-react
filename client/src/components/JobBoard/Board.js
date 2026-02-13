@@ -1,10 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ListCardContainer from './ListCardContainer';
 import util from '../../../lib/util';
 
 export default class Board extends React.Component {
   static propTypes = {
-    name: React.PropTypes.string,
+    name: PropTypes.string,
   };
 
   constructor(props) {

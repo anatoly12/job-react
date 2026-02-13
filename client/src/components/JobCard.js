@@ -1,19 +1,21 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import JobInfo from './JobInfo';
 import { FlatButton, RaisedButton, Dialog } from 'material-ui';
 // import sample from '../../../database/sampleData.js';
 
 import InterviewTab from './InterviewTab';
 
-const propTypes = {
-
-};
-
 const customContentStyle = {
   maxWidth: 600,
 };
 
 export default class JobCard extends Component {
+	static propTypes = {
+		open: PropTypes.bool.isRequired,
+		card: PropTypes.object.isRequired,
+		handleDialog: PropTypes.func.isRequired,
+	};
 	// TODO: Rename state to avoid duplication with JobEntry.jsx
 	state = {
 		open: false,

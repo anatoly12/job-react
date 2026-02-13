@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Promise = require('bluebird');
 const User = require('./models/users.js');
 const JobPost = require('./models/jobPost');
+const AnalyticsEvent = require('./models/analyticsEvent');
 Promise.promisifyAll(mongoose);
 
 module.exports.storeJobPosting = (postDetails) => {
@@ -20,4 +21,28 @@ module.exports.getJobPosting = (userInfo) => {
   .catch(err => {
     console.log('DBH: err storing job posting', err);
   })
+}
+
+module.exports.storeAnalyticsEvent = (eventPayload = {}) => {
+  if (!eventPayload.name) {
+    return Promise.reject(new Error('Analytics event name is required'));
+  }
+
+  const analyticsEvent = {
+    name: eventPayload.name,
+    data: eventPayload.data || {},
+  };
+
+  if (eventPayload.timestamp) {
+    const timestamp = new Date(eventPayload.timestamp);
+    if (!isNaN(timestamp.getTime())) {
+      analyticsEvent.createdAt = timestamp;
+    }
+  }
+
+  return AnalyticsEvent(analyticsEvent).saveAsync()
+    .catch(err => {
+      console.log('DBH: err storing analytics event', err);
+      throw err;
+    });
 }

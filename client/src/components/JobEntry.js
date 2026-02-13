@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 import util from '../../lib/util';
+import analytics from '../../lib/analytics';
 
 const customContentStyle = {
   maxWidth: 600,
@@ -39,9 +40,11 @@ export default class JobEntry extends Component {
 		this.setState({ open: true });
 	};
 
-	handleClose = (e) => {
-    e.preventDefault();
-		this.props.handleDialog();
+	handleClose = (e, reason = 'unknown') => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+		this.props.handleDialog(reason);
 	}
 
   handleBoardName = (e) => { this.setState({ boardName: e.target.value }) };
@@ -53,9 +56,27 @@ export default class JobEntry extends Component {
   handleLocationChange = (e) => { this.setState({ location: e.target.value }) };
   handleJobUrlChange = (e) => { this.setState({ jobUrl: e.target.value }) };
   
-  onNewJobPostingSave = (e) => {
-    e.preventDefault();
-    util.submitNewJobPosting(this.state);
+  onNewJobPostingSave = () => {
+    const { boardName, companyName, jobTitle } = this.state;
+    const eventContext = {
+      boardName,
+      companyName,
+      jobTitle,
+    };
+
+    analytics.trackEvent('job_posting_submit_attempted', eventContext);
+
+    return util.submitNewJobPosting(this.state)
+      .then(() => {
+        analytics.trackEvent('job_posting_submit_succeeded', eventContext);
+      })
+      .catch((error) => {
+        const errorMessage = error && error.message ? error.message : 'unknown_error';
+        analytics.trackEvent('job_posting_submit_failed', {
+          ...eventContext,
+          errorMessage,
+        });
+      });
   }
 
   render() {
@@ -66,14 +87,14 @@ export default class JobEntry extends Component {
         label="Save"
         primary={true}
         onTouchTap={(e) => {
-         this.handleClose(e);
-         this.onNewJobPostingSave(e);
+         this.handleClose(e, 'save');
+         this.onNewJobPostingSave();
         }}
       />,
       <FlatButton
         label="Cancel"
         primary={true}
-        onTouchTap={handleDialog}
+        onTouchTap={() => handleDialog('cancel')}
       />,
     ];
     return (
@@ -149,5 +170,15 @@ export default class JobEntry extends Component {
         </Dialog>
       </div>
     )
-  }  
+  }
 }
+
+JobEntry.propTypes = {
+  handleDialog: PropTypes.func,
+  open: PropTypes.bool,
+};
+
+JobEntry.defaultProps = {
+  handleDialog: () => {},
+  open: false,
+};

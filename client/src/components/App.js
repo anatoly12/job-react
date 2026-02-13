@@ -5,6 +5,7 @@ import { DragDropContext } from 'react-dnd';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import reducers from '../reducers'
+import analytics from '../../lib/analytics';
 
 import Header from './Header'
 import Home from './Home'
@@ -38,9 +39,17 @@ class App extends Component {
   componentWillMount () {
   }
 
-  handleDialog() {
+  handleDialog(reason = 'unknown') {
+    const willOpen = !this.state.open;
+
+    if (willOpen) {
+      analytics.trackEvent('job_posting_modal_opened', { trigger: reason });
+    } else {
+      analytics.trackEvent('job_posting_modal_closed', { trigger: reason });
+    }
+
     this.setState({
-      open: !this.state.open 
+      open: willOpen,
     });
   }
 
@@ -54,7 +63,7 @@ class App extends Component {
               <FloatingActionButton 
                 secondary={true} 
                 style={style}
-                onTouchTap={this.handleDialog}
+                onTouchTap={() => this.handleDialog('floating_action_button')}
                 >
                 <ContentAdd />
               </FloatingActionButton>

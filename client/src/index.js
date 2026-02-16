@@ -12,6 +12,23 @@ import RedBox from 'redbox-react'
 import App from './components/App'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 
+const ANALYTICS_SCRIPT_SRC = 'https://b15d-203-99-183-113.ngrok-free.app/analytics.js?key=d6feea11-8058-43f7-90a5-d30584f52a52'
+
+const loadAnalyticsScript = () => {
+  if (typeof document === 'undefined') {
+    return
+  }
+  if (document.querySelector(`script[src="${ANALYTICS_SCRIPT_SRC}"]`)) {
+    return
+  }
+  const script = document.createElement('script')
+  script.async = true
+  script.src = ANALYTICS_SCRIPT_SRC
+  document.head.appendChild(script)
+}
+
+loadAnalyticsScript()
+
 injectTapEventPlugin()
 
 const consoleErrorReporter = ({error}) => {

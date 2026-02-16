@@ -22,7 +22,8 @@ export default class Call extends React.Component {
       blob: null,
       stop: false,
       transcript: '',
-      stream: null
+      stream: null,
+      mediaError: null
     };
 
     this.getUserMedia = this.getUserMedia.bind(this);
@@ -42,6 +43,7 @@ export default class Call extends React.Component {
   }
 
   getUserMedia() {
+    this.setState({ mediaError: null });
     navigator.getUserMedia = navigator.getUserMedia ||
                          navigator.webkitGetUserMedia ||
                          navigator.mozGetUserMedia;
@@ -49,7 +51,7 @@ export default class Call extends React.Component {
     if (navigator.getUserMedia) {
       this.captureUserMedia( stream => this.handleAudio(stream));
     } else {
-      console.log('getUserMedia not supported');
+      this.audioError(new Error('getUserMedia not supported'));
     }
   }
 
@@ -65,17 +67,32 @@ export default class Call extends React.Component {
   handleAudio(stream) {
     this.setState({
       src: window.URL.createObjectURL(stream),
-      stream: stream
+      stream: stream,
+      mediaError: null
     });
   }
 
   audioError(err) {
-    alert('Your browser cannot stream from your webcam. Please switch to Chrome or Firefox.');
+    let message = 'Unable to access your microphone. Please check your browser permissions or try a different browser.';
+    if (err && err.name === 'NotAllowedError') {
+      message = 'Microphone access was denied. Please allow microphone permissions and try again.';
+    } else if (err && err.name === 'NotFoundError') {
+      message = 'No microphone was found. Please connect a microphone and try again.';
+    }
+
+    this.setState({
+      mediaError: message,
+      start: false,
+      stop: false
+    });
   }
 
 
   startRecord() {
     this.getUserMedia();
+    if (!navigator.getUserMedia) {
+      return;
+    }
     this.captureUserMedia( stream => {
       this.state.recordAudio = RecordRTC(stream, {type: 'audio'});
       this.state.recordAudio.startRecording();
@@ -89,7 +106,8 @@ export default class Call extends React.Component {
       transcript: '',
       uploadError: false,
       uploadSuccess: false,
-      noTranscript: false
+      noTranscript: false,
+      mediaError: null
     });
   }
 
@@ -134,9 +152,13 @@ export default class Call extends React.Component {
     });
   }
   render() {
+    const { mediaError } = this.state;
     if (this.state.prompt === 1) {
       return (
         <div>
+          {mediaError &&
+            <p>{mediaError}</p>
+          }
           <audio autoPlay='true' src={this.state.question + '.mp3'} controls></audio>
           <MuiThemeProvider>
             <RaisedButton
@@ -158,6 +180,9 @@ export default class Call extends React.Component {
     } else if (this.state.prompt === 2) {
       return (
         <div>
+          {mediaError &&
+            <p>{mediaError}</p>
+          }
           <audio autoPlay='true' src={this.state.src} muted="muted" controls></audio>
           <MuiThemeProvider>
             <RaisedButton
@@ -189,6 +214,9 @@ export default class Call extends React.Component {
       return (
         <div>
           <h1>Ready for your question?</h1>
+          {mediaError &&
+            <p>{mediaError}</p>
+          }
           <MuiThemeProvider>
             <RaisedButton
               label="Click here to begin"

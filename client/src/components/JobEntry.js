@@ -55,7 +55,23 @@ export default class JobEntry extends Component {
   
   onNewJobPostingSave = (e) => {
     e.preventDefault();
-    util.submitNewJobPosting(this.state);
+    util.submitNewJobPosting(this.state)
+      .then(() => this.trackJobApplicationSubmission())
+      .catch(err => console.error(err));
+  }
+
+  trackJobApplicationSubmission = () => {
+    if (typeof window === 'undefined') { return; }
+    const analytics = window.analytics;
+    if (!analytics || typeof analytics.track !== 'function') { return; }
+
+    const { boardName, companyName, jobTitle, location } = this.state;
+    analytics.track('Job Application Submitted', {
+      boardName,
+      companyName,
+      jobTitle,
+      location,
+    });
   }
 
   render() {

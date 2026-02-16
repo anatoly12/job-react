@@ -52,10 +52,29 @@ export default class JobEntry extends Component {
   handlePreferredQualificationsChange = (e) => { this.setState({ preferredQualifications: e.target.value }) };
   handleLocationChange = (e) => { this.setState({ location: e.target.value }) };
   handleJobUrlChange = (e) => { this.setState({ jobUrl: e.target.value }) };
+
+  trackJobSubmission = (jobDetails) => {
+    if (typeof window === 'undefined') { return; }
+
+    const { analytics } = window;
+
+    if (analytics && typeof analytics.track === 'function') {
+      analytics.track('Job Application Submitted', {
+        boardName: jobDetails.boardName,
+        companyName: jobDetails.companyName,
+        jobTitle: jobDetails.jobTitle,
+        location: jobDetails.location,
+        jobUrl: jobDetails.jobUrl,
+      });
+    }
+  };
   
   onNewJobPostingSave = (e) => {
     e.preventDefault();
-    util.submitNewJobPosting(this.state);
+    const jobDetails = { ...this.state };
+
+    util.submitNewJobPosting(jobDetails);
+    this.trackJobSubmission(jobDetails);
   }
 
   render() {

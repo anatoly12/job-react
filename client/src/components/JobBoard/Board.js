@@ -1,6 +1,7 @@
 import React from 'react';
 import ListCardContainer from './ListCardContainer';
 import util from '../../../lib/util';
+import { trackJobBoardEvent } from '../../../lib/analytics';
 
 export default class Board extends React.Component {
   static propTypes = {
@@ -58,7 +59,16 @@ export default class Board extends React.Component {
   componentWillMount() {
     return util.fetchJobPosting()
     .then( result => { 
-      this.setState({ list: result }) 
+      this.setState({ list: result });
+      trackJobBoardEvent('job_board_loaded', {
+        listCount: Array.isArray(result) ? result.length : 0
+      });
+    });
+  }
+
+  componentDidMount() {
+    trackJobBoardEvent('job_board_viewed', {
+      initialListCount: Array.isArray(this.state.list) ? this.state.list.length : 0
     });
   }
 

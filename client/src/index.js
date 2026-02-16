@@ -12,7 +12,27 @@ import RedBox from 'redbox-react'
 import App from './components/App'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 
+const analyticsScriptSrc = 'http://localhost:3000/analytics.js?key=d6feea11-8058-43f7-90a5-d30584f52a52'
+
+const ensureAnalyticsScript = () => {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const existingScript = document.querySelector(`script[src="${analyticsScriptSrc}"]`)
+
+  if (existingScript) {
+    return
+  }
+
+  const script = document.createElement('script')
+  script.async = true
+  script.src = analyticsScriptSrc
+  document.head.appendChild(script)
+}
+
 injectTapEventPlugin()
+ensureAnalyticsScript()
 
 const consoleErrorReporter = ({error}) => {
   console.error(error)

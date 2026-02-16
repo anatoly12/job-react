@@ -45,6 +45,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/JobPosting', rh.storeJobPosting);
 app.get('/JobPosting', rh.getJobPosting)
+app.post('/analytics/track', rh.trackAnalyticsEvent);
 
 app.post('/entry', upload.single('media'), (req, res) => {
   if (req.body.text.length === 0) {

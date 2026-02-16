@@ -4,6 +4,7 @@ import { DragSource, DropTarget } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import flow from 'lodash/flow';
 import JobCard from '../JobCard';
+import { trackJobBoardEvent } from '../../../lib/analytics';
 
 class Card extends Component {
   constructor(props) {
@@ -14,10 +15,22 @@ class Card extends Component {
   }
 
   handleDialog() {
-    console.log('handle toggleed');
+    const willOpen = !this.state.open;
+
     this.setState({
-      open: !this.state.open 
+      open: willOpen 
     });
+
+    const { card, listHeader } = this.props;
+
+    const payload = {
+      listHeader,
+      companyName: card.companyName,
+      jobTitle: card.jobTitle,
+      cardId: card.id || card._id
+    };
+
+    trackJobBoardEvent(willOpen ? 'job_board_card_opened' : 'job_board_card_closed', payload);
   }
 
   render() {
@@ -41,8 +54,10 @@ const cardSource = {
   beginDrag(props) {
     return {
       index: props.index,
+      initialIndex: props.index,
       listId: props.listId,
-      card: props.card
+      card: props.card,
+      listHeader: props.listHeader
     };
   },
 
@@ -116,3 +131,18 @@ export default flow(
     isDragging: monitor.isDragging()
   }))
 )(Card);
+
+Card.propTypes = {
+  card: PropTypes.object.isRequired,
+  listHeader: PropTypes.string,
+  index: PropTypes.number.isRequired,
+  listId: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]).isRequired,
+  removeCard: PropTypes.func.isRequired,
+  moveCard: PropTypes.func.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
+  connectDropTarget: PropTypes.func.isRequired,
+  isDragging: PropTypes.bool
+};

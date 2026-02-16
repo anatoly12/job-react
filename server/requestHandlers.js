@@ -22,3 +22,18 @@ module.exports.getJobPosting = (req, res) => {
     res.status(500);
   })
 }
+
+module.exports.trackAnalyticsEvent = (req, res) => {
+  if (!req.body || !req.body.eventName) {
+    return res.status(400).send({ error: 'eventName is required' });
+  }
+
+  return dbh.storeAnalyticsEvent(req.body)
+  .then(() => {
+    res.sendStatus(204);
+  })
+  .catch(err => {
+    consol.elog('RH: error in trackAnalyticsEvent', err);
+    res.status(500).send({ error: 'Failed to store analytics event' });
+  });
+}

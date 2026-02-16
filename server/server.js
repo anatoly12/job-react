@@ -32,6 +32,68 @@ const app = express();
 const db = require('../database/db_config.js');
 const rh = require('./requestHandlers');
 
+const parseAuthorizedUsers = (configString = '') => {
+  return configString
+    .split(',')
+    .map(entry => entry.trim())
+    .filter(Boolean)
+    .reduce((map, entry) => {
+      const separatorIndex = entry.indexOf(':');
+      if (separatorIndex === -1) {
+        console.warn('Ignoring malformed AUTH config entry. Expected "userId:token".');
+        return map;
+      }
+      const userId = entry.slice(0, separatorIndex).trim();
+      const token = entry.slice(separatorIndex + 1).trim();
+      if (!userId || !token) {
+        console.warn('Ignoring malformed AUTH config entry. userId and token must be non-empty.');
+        return map;
+      }
+      map.set(token, userId);
+      return map;
+    }, new Map());
+};
+
+const tokenToUserMap = parseAuthorizedUsers(process.env.AUTH_USERS || process.env.AUTH_TOKENS || '');
+
+const getRequestToken = (req) => {
+  const authHeader = req.get('authorization');
+  if (authHeader) {
+    const [scheme, credentials] = authHeader.split(' ');
+    if (/^bearer$/i.test(scheme) && credentials) {
+      return credentials.trim();
+    }
+    if (!credentials && scheme) {
+      return scheme.trim();
+    }
+  }
+  const apiKeyHeader = req.get('x-api-key');
+  if (apiKeyHeader) {
+    return apiKeyHeader.trim();
+  }
+  return null;
+};
+
+const authenticateRequest = (req, res, next) => {
+  if (!tokenToUserMap.size) {
+    console.error('Authentication configuration missing. Set AUTH_USERS env variable to userId:token pairs.');
+    return res.status(500).json({ error: 'Authentication is not configured on the server.' });
+  }
+
+  const token = getRequestToken(req);
+  if (!token) {
+    return res.status(401).json({ error: 'Missing authentication token.' });
+  }
+
+  const userId = tokenToUserMap.get(token);
+  if (!userId) {
+    return res.status(401).json({ error: 'Invalid authentication token.' });
+  }
+
+  req.authenticatedUserId = userId;
+  next();
+};
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('morgan')('dev'));
@@ -43,15 +105,21 @@ app.use(express.static(__dirname + '/../client/dist'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/JobPosting', authenticateRequest);
+app.use('/entry', authenticateRequest);
+app.use('/db', authenticateRequest);
+app.use('/setReminder', authenticateRequest);
+
 app.post('/JobPosting', rh.storeJobPosting);
 app.get('/JobPosting', rh.getJobPosting)
 
 app.post('/entry', upload.single('media'), (req, res) => {
-  if (req.body.text.length === 0) {
+  if (!req.body || typeof req.body.text !== 'string' || req.body.text.length === 0) {
     res.sendStatus(400);
+    return;
   }
   let log = {
-    user_id: req.body.user_id ? user_id : '123',
+    user_id: req.authenticatedUserId,
     audio: {
       bucket: req.file ? req.file.bucket : null,
       key: req.file ? req.file.key : null,
@@ -64,7 +132,7 @@ app.post('/entry', upload.single('media'), (req, res) => {
 
 app.post('/db/retrieveEntry', (req, res) => {
   let query = {};
-  query.user_id = req.body.user_id ? req.body.user_id : '123';
+  query.user_id = req.authenticatedUserId;
   database.retrieveEntry(query)
   .then((results) => {
     res.send(results);
@@ -85,7 +153,7 @@ const getAWSSignedUrl = (bucket, key) => {
 app.get('/entry/:entryId', (req, res) => {
   let query = {};
   query.entryId = req.params.entryId;
-  query.user_id = '123';
+  query.user_id = req.authenticatedUserId;
   database.retrieveEntryMedia(query)
   .then( result => {
     let key = result[0].audio.key;;

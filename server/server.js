@@ -9,6 +9,12 @@ const multerS3 = require('multer-s3');
 const s3 = new AWS.S3();
 const database = require('../database/dbHelper');
 
+const SPARKPOST_API_KEY = process.env.SPARKPOST_API_KEY;
+
+if (!SPARKPOST_API_KEY) {
+  throw new Error('Missing SparkPost API key. Set SPARKPOST_API_KEY environment variable.');
+}
+
 const upload = multer({
   storage: multerS3({
     s3: s3,
@@ -127,7 +133,7 @@ app.post('/setReminder', function (req, res) {
     url: 'https://api.sparkpost.com/api/v1/transmissions',
     headers: {
       'content-type': 'application/json',
-      'authorization': '0526b81c29cb593ff22fd28413a1e139eedbb0ac'
+      'authorization': SPARKPOST_API_KEY
     },
     data: {
       "options":{"open_tracking":true,"click_tracking":true,"start_time": thankYouTime},

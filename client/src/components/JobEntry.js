@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 import util from '../../lib/util';
+import analytics from '../../lib/analytics';
 
 const customContentStyle = {
   maxWidth: 600,
@@ -56,6 +57,12 @@ export default class JobEntry extends Component {
   onNewJobPostingSave = (e) => {
     e.preventDefault();
     util.submitNewJobPosting(this.state);
+
+    if (this.state.boardName && this.state.boardName.trim().toLowerCase() === 'applied') {
+      analytics.trackJobApplication(this.state, {
+        source: 'job-entry-dialog',
+      });
+    }
   }
 
   render() {

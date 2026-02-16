@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import update from 'react/lib/update';
 import Card from './Card';
 import { DropTarget } from 'react-dnd';
+import analytics from '../../../lib/analytics';
 
 class ListCardContainer extends Component {
 
@@ -58,6 +59,7 @@ class ListCardContainer extends Component {
               key={card.id}
               index={i}
               listId={this.props.id}
+              listHeader={header}
               card={card}                           
               removeCard={this.removeCard.bind(this)}
               moveCard={this.moveCard.bind(this)} />
@@ -69,15 +71,35 @@ class ListCardContainer extends Component {
 }
 
 const cardTarget = {
-  drop(props, monitor, component ) {
-    const { id } = props;
-    const sourceObj = monitor.getItem();    
-    if ( id !== sourceObj.listId ) component.pushCard(sourceObj.card);
+  drop(props, monitor, component) {
+    const { id, header } = props;
+    const sourceObj = monitor.getItem();
+    const movedToDifferentList = id !== sourceObj.listId;
+
+    if (movedToDifferentList) {
+      component.pushCard(sourceObj.card);
+
+      if (header && header.toLowerCase() === 'applied') {
+        analytics.trackJobApplication(sourceObj.card, {
+          sourceBoard: sourceObj.listHeader,
+          targetBoard: header,
+          interaction: 'drag-and-drop',
+        });
+      }
+
+      monitor.getItem().listId = id;
+      monitor.getItem().listHeader = header;
+
+      if (sourceObj.card) {
+        sourceObj.card.boardName = header;
+      }
+    }
+
     return {
-      listId: id
+      listId: id,
     };
   }
-}
+};
 
 export default DropTarget("CARD", cardTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),

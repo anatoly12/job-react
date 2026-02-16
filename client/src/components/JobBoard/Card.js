@@ -4,6 +4,7 @@ import { DragSource, DropTarget } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import flow from 'lodash/flow';
 import JobCard from '../JobCard';
+import analytics from '../../../lib/analytics';
 
 class Card extends Component {
   constructor(props) {
@@ -14,9 +15,19 @@ class Card extends Component {
   }
 
   handleDialog() {
-    console.log('handle toggleed');
-    this.setState({
-      open: !this.state.open 
+    const { card, listHeader } = this.props;
+
+    this.setState(prevState => {
+      const nextOpen = !prevState.open;
+
+      if (!prevState.open) {
+        analytics.trackJobViewed(card, {
+          source: 'job-card',
+          boardName: listHeader,
+        });
+      }
+
+      return { open: nextOpen };
     });
   }
 
@@ -42,6 +53,7 @@ const cardSource = {
     return {
       index: props.index,
       listId: props.listId,
+      listHeader: props.listHeader,
       card: props.card
     };
   },

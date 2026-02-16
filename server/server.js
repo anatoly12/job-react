@@ -43,10 +43,21 @@ app.use(express.static(__dirname + '/../client/dist'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/JobPosting', rh.storeJobPosting);
-app.get('/JobPosting', rh.getJobPosting)
+const authenticateRequest = (req, res, next) => {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : authHeader.trim();
 
-app.post('/entry', upload.single('media'), (req, res) => {
+  if (!token || token !== process.env.API_AUTH_TOKEN) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  next();
+};
+
+app.post('/JobPosting', authenticateRequest, rh.storeJobPosting);
+app.get('/JobPosting', authenticateRequest, rh.getJobPosting)
+
+app.post('/entry', authenticateRequest, upload.single('media'), (req, res) => {
   if (req.body.text.length === 0) {
     res.sendStatus(400);
   }
@@ -62,7 +73,7 @@ app.post('/entry', upload.single('media'), (req, res) => {
 
 });
 
-app.post('/db/retrieveEntry', (req, res) => {
+app.post('/db/retrieveEntry', authenticateRequest, (req, res) => {
   let query = {};
   query.user_id = req.body.user_id ? req.body.user_id : '123';
   database.retrieveEntry(query)
@@ -82,7 +93,7 @@ const getAWSSignedUrl = (bucket, key) => {
   return s3.getSignedUrl('getObject', params);
 };
 
-app.get('/entry/:entryId', (req, res) => {
+app.get('/entry/:entryId', authenticateRequest, (req, res) => {
   let query = {};
   query.entryId = req.params.entryId;
   query.user_id = '123';
@@ -97,7 +108,7 @@ app.get('/entry/:entryId', (req, res) => {
 });
 
 
-app.post('/setReminder', function (req, res) {
+app.post('/setReminder', authenticateRequest, function (req, res) {
   // convert date and time from zulu to PDT
 
   const date = req.body.reminderDate;

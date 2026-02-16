@@ -58,6 +58,7 @@ class ListCardContainer extends Component {
               key={card.id}
               index={i}
               listId={this.props.id}
+              listHeader={header}
               card={card}                           
               removeCard={this.removeCard.bind(this)}
               moveCard={this.moveCard.bind(this)} />
@@ -70,11 +71,12 @@ class ListCardContainer extends Component {
 
 const cardTarget = {
   drop(props, monitor, component ) {
-    const { id } = props;
+    const { id, header } = props;
     const sourceObj = monitor.getItem();    
     if ( id !== sourceObj.listId ) component.pushCard(sourceObj.card);
     return {
-      listId: id
+      listId: id,
+      listHeader: header
     };
   }
 }

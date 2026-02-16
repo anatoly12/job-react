@@ -67,8 +67,8 @@ export default class Board extends React.Component {
       <div className="job-board">
       {this.state.list.map( listcontainer => (
         <ListCardContainer
-          key={Math.floor(Math.random()*100)} 
-          id={Math.floor(Math.random()*100)} 
+          key={listcontainer.header}
+          id={listcontainer.header}
           list={listcontainer.cards} 
           header={listcontainer.header}/>
       ))}

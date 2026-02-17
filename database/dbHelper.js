@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
+const Promise = require('bluebird');
+mongoose.Promise = Promise;
 const mongoDatabase = require('./models/users');
 const User = mongoDatabase.User;
 
-exports.saveEntry = (req, res, log) => {
+exports.saveEntry = (log = {}) => {
+  if (!log.user_id) {
+    return Promise.reject(new Error('user_id is required to save entry'));
+  }
   let logEntry = {
     created_at: Date.now(),
     audio: {
@@ -12,14 +16,9 @@ exports.saveEntry = (req, res, log) => {
     },
     text: log.text,
   };
-  User.findOneAndUpdate({user_id: log.user_id}, {
+  return User.findOneAndUpdate({user_id: log.user_id}, {
     $push: {'entries': logEntry}
-  }, {safe: true, upsert: true, new: true})
-  .then(() => {
-    res.sendStatus(201);
-  })
-  .error(err => res.sendStatus(500).send(err))
-  .catch(err => res.sendStatus(400).send(err));
+  }, {safe: true, upsert: true, new: true});
 };
 
 exports.retrieveEntry = (query) => {

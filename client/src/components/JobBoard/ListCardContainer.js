@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import update from 'react/lib/update';
 import Card from './Card';
 import { DropTarget } from 'react-dnd';
+import analytics from '../../../lib/analytics';
 
 class ListCardContainer extends Component {
 
@@ -39,7 +40,14 @@ class ListCardContainer extends Component {
           [hoverIndex, 0, dragCard]
         ]
       }
-    }));
+    }), () => {
+      analytics.trackEvent('job_board_card_reordered', {
+        list: this.props.header,
+        cardId: dragCard.id,
+        fromIndex: dragIndex,
+        toIndex: hoverIndex
+      });
+    });
   }
 
   render() {
@@ -58,6 +66,7 @@ class ListCardContainer extends Component {
               key={card.id}
               index={i}
               listId={this.props.id}
+              listHeader={header}
               card={card}                           
               removeCard={this.removeCard.bind(this)}
               moveCard={this.moveCard.bind(this)} />
@@ -72,7 +81,16 @@ const cardTarget = {
   drop(props, monitor, component ) {
     const { id } = props;
     const sourceObj = monitor.getItem();    
-    if ( id !== sourceObj.listId ) component.pushCard(sourceObj.card);
+    if ( id !== sourceObj.listId ) {
+      analytics.trackEvent('job_board_card_moved', {
+        cardId: sourceObj.card && sourceObj.card.id,
+        fromListId: sourceObj.listId,
+        fromList: sourceObj.listHeader,
+        toListId: id,
+        toList: props.header
+      });
+      component.pushCard(sourceObj.card);
+    }
     return {
       listId: id
     };

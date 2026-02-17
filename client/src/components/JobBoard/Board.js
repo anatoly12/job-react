@@ -1,6 +1,7 @@
 import React from 'react';
 import ListCardContainer from './ListCardContainer';
 import util from '../../../lib/util';
+import analytics from '../../../lib/analytics';
 
 export default class Board extends React.Component {
   static propTypes = {
@@ -58,7 +59,13 @@ export default class Board extends React.Component {
   componentWillMount() {
     return util.fetchJobPosting()
     .then( result => { 
-      this.setState({ list: result }) 
+      const lists = Array.isArray(result) ? result : [];
+      this.setState({ list: lists }) 
+      const totalJobs = lists.reduce((count, column) => count + (column.cards ? column.cards.length : 0), 0);
+      analytics.trackEvent('job_board_loaded', {
+        boardCount: lists.length,
+        jobCount: totalJobs
+      });
     });
   }
 

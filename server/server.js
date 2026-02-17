@@ -29,6 +29,9 @@ AWS.config.update({
 var axios = require('axios')
 const app = express();
 
+const sparkPostApiKey = process.env.SPARKPOST_API_KEY;
+const fallbackRecipientEmail = process.env.SPARKPOST_RECIPIENT_EMAIL;
+
 const db = require('../database/db_config.js');
 const rh = require('./requestHandlers');
 
@@ -100,6 +103,19 @@ app.get('/entry/:entryId', (req, res) => {
 app.post('/setReminder', function (req, res) {
   // convert date and time from zulu to PDT
 
+  if (!sparkPostApiKey) {
+    console.error('Missing SparkPost API key. Set SPARKPOST_API_KEY.');
+    return res.sendStatus(500);
+  }
+
+  const authenticatedUser = req.user || req.body.user || {};
+  const recipientEmail = authenticatedUser.email || req.body.recipientEmail || req.body.email || fallbackRecipientEmail;
+  if (!recipientEmail) {
+    console.error('Missing reminder recipient email.');
+    return res.sendStatus(400);
+  }
+  const recipientFirstName = authenticatedUser.firstName || authenticatedUser.first_name || req.body.firstName || req.body.first_name || 'there';
+
   const date = req.body.reminderDate;
   const time = req.body.reminderTime;
   const followDate = req.body.followUpDate;
@@ -121,35 +137,42 @@ app.post('/setReminder', function (req, res) {
   // Format start_time for the email
 
 
-  // Thank you letter reminder
-  axios({
+  const sendSparkPostTransmission = (startTime, subject, text, html) => axios({
     method: 'post',
     url: 'https://api.sparkpost.com/api/v1/transmissions',
     headers: {
       'content-type': 'application/json',
-      'authorization': '0526b81c29cb593ff22fd28413a1e139eedbb0ac'
+      'authorization': sparkPostApiKey
     },
     data: {
-      "options":{"open_tracking":true,"click_tracking":true,"start_time": thankYouTime},
+      "options":{"open_tracking":true,"click_tracking":true,"start_time": startTime},
       "return_path":"bounces@jobflow.tech",
       "metadata":{"some_useful_metadata":"testing_sparkpost"},
       "substitution_data":{"signature":"JobFlow Reminder"},
       "recipients":[
         {"address":{
-          "email":"eddieechou@gmail.com",
+          "email": recipientEmail,
           "tags":["reminder"],
           "substitution_data": {
-            "customer_type":"Platinum","first_name":"Eddie"
+            "customer_type":"Platinum","first_name": recipientFirstName
           }}}],
       "content":{
         "from":{"name":"Job Flow","email":"reminders@jobflow.tech"},
-        "subject":"Thank-you email reminder",
+        "subject": subject,
         "reply_to":"Job Flow",
-        "text":"Greetings {{address.first_name}}\r\nCongrats on completing your interview!\r\nCongratulations,\r\n{{signature}}",
-        "html":"<strong>Greetings {{address.first_name}},</strong><p>Congratulations on finishing your interview! This is a reminder to send your thank-you email.</p><p>Congrats again!</p>{{signature}}"
+        "text": text,
+        "html": html
       }
     }
-  })
+  });
+
+  // Thank you letter reminder
+  sendSparkPostTransmission(
+    thankYouTime,
+    'Thank-you email reminder',
+    'Greetings {{address.first_name}}\r\nCongrats on completing your interview!\r\nCongratulations,\r\n{{signature}}',
+    '<strong>Greetings {{address.first_name}},</strong><p>Congratulations on finishing your interview! This is a reminder to send your thank-you email.</p><p>Congrats again!</p>{{signature}}'
+  )
   .then((response) => {
     console.log('response: ', response);
     console.log('Success: set up thank-you email reminder at ', thankYouTime);
@@ -160,34 +183,12 @@ app.post('/setReminder', function (req, res) {
 
 
   // Follow up reminder in 5 days
-  axios({
-    method: 'post',
-    url: 'https://api.sparkpost.com/api/v1/transmissions',
-    headers: {
-      'content-type': 'application/json',
-      'authorization': '0526b81c29cb593ff22fd28413a1e139eedbb0ac'
-    },
-    data: {
-      "options":{"open_tracking":true,"click_tracking":true,"start_time": followUpTime},
-      "return_path":"bounces@jobflow.tech",
-      "metadata":{"some_useful_metadata":"testing_sparkpost"},
-      "substitution_data":{"signature":"JobFlow Reminder"},
-      "recipients":[
-        {"address":{
-          "email":"eddieechou@gmail.com",
-          "tags":["reminder"],
-          "substitution_data": {
-            "customer_type":"Platinum","first_name":"Eddie"
-          }}}],
-      "content":{
-        "from":{"name":"Job Flow","email":"reminders@jobflow.tech"},
-        "subject":"Reminder",
-        "reply_to":"Job Flow",
-        "text":"Greetings {{address.first_name}}\r\nFollow up email!\r\nCongratulations,\r\n{{signature}}",
-        "html":"<strong>Greetings {{address.first_name}},</strong><p>You completed your interview at Google 5 days ago. This is a reminder to send an email to follow-up on your application.</p><p>Good luck!</p>{{signature}}"
-      }
-    }
-  })
+  sendSparkPostTransmission(
+    followUpTime,
+    'Reminder',
+    'Greetings {{address.first_name}}\r\nFollow up email!\r\nCongratulations,\r\n{{signature}}',
+    '<strong>Greetings {{address.first_name}},</strong><p>You completed your interview at Google 5 days ago. This is a reminder to send an email to follow-up on your application.</p><p>Good luck!</p>{{signature}}'
+  )
   .then((response) => {
     console.log('Success: set up follow-up email reminder at ', followUpTime);
   })

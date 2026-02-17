@@ -47,19 +47,48 @@ app.post('/JobPosting', rh.storeJobPosting);
 app.get('/JobPosting', rh.getJobPosting)
 
 app.post('/entry', upload.single('media'), (req, res) => {
-  if (req.body.text.length === 0) {
-    res.sendStatus(400);
-  }
-  let log = {
-    user_id: req.body.user_id ? user_id : '123',
-    audio: {
-      bucket: req.file ? req.file.bucket : null,
-      key: req.file ? req.file.key : null,
-    },
-    text: req.body.text,
-  };
-  database.saveEntry(req, res, log);
+  const rawUserId = req.body && req.body.user_id;
+  const userId = typeof rawUserId === 'string'
+    ? rawUserId.trim()
+    : (rawUserId ? String(rawUserId).trim() : '');
 
+  if (!userId) {
+    return res.status(400).json({ error: 'user_id is required' });
+  }
+
+  const rawText = req.body && req.body.text;
+  const text = typeof rawText === 'string'
+    ? rawText.trim()
+    : (rawText ? String(rawText).trim() : '');
+
+  const hasText = text.length > 0;
+  const hasMedia = Boolean(req.file);
+
+  if (!hasText && !hasMedia) {
+    return res.status(400).json({ error: 'Entry must include text or media' });
+  }
+
+  if (hasMedia && (!req.file.bucket || !req.file.key)) {
+    return res.status(422).json({ error: 'Uploaded media metadata is incomplete' });
+  }
+
+  const log = {
+    user_id: userId,
+    audio: {
+      bucket: hasMedia ? req.file.bucket : null,
+      key: hasMedia ? req.file.key : null,
+    },
+    text: hasText ? text : null,
+  };
+
+  database.saveEntry(log)
+    .then(() => {
+      return res.status(201).json({ message: 'Entry saved' });
+    })
+    .catch(err => {
+      console.error('Failed to save entry', err);
+      return res.status(500).json({ error: 'Failed to save entry' });
+    });
 });
 
 app.post('/db/retrieveEntry', (req, res) => {

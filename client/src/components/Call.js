@@ -5,6 +5,7 @@ import VoiceRecognition from './VoiceRecognition';
 import RecordRTC from 'recordrtc';
 import axios from 'axios';
 import EntryList from '../containers/entry-list/EntryList';
+import util from '../../lib/util';
 
 export default class Call extends React.Component {
   static propTypes = {
@@ -75,6 +76,7 @@ export default class Call extends React.Component {
 
 
   startRecord() {
+    util.trackEvent('Recording Started');
     this.getUserMedia();
     this.captureUserMedia( stream => {
       this.state.recordAudio = RecordRTC(stream, {type: 'audio'});
@@ -94,6 +96,7 @@ export default class Call extends React.Component {
   }
 
   stopRecord() {
+    util.trackEvent('Recording Stopped');
     this.state.recordAudio.stopRecording((audioURL) => {
       this.setState({
         blob: this.state.recordAudio.blob,
@@ -104,6 +107,9 @@ export default class Call extends React.Component {
   }
 
   uploadAudio() {
+    util.trackEvent('Entry Upload Started', {
+      transcriptLength: this.state.transcript.length,
+    });
     let blob = this.state.blob;
     let fd = new FormData();
     fd.append('media', blob);
@@ -114,9 +120,13 @@ export default class Call extends React.Component {
     axios.post('/entry', fd, config)
     .then( res => {
       console.log('Successful upload!');
+      util.trackEvent('Entry Upload Succeeded');
     })
     .catch(err => {
       console.log('Error uploading...');
+      util.trackEvent('Entry Upload Failed', {
+        message: err.message,
+      });
     });
   }
 

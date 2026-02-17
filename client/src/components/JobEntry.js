@@ -34,6 +34,12 @@ export default class JobEntry extends Component {
     this.onNewJobPostingSave = this.onNewJobPostingSave.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    if (!prevProps.open && this.props.open) {
+      util.trackEvent('Job Entry Dialog Opened');
+    }
+  }
+
 	// TODO: Rename handleOpen and handleClose functions to avoid duplication with JobEntry.jsx
 	handleOpen = () => {
 		this.setState({ open: true });
@@ -55,6 +61,11 @@ export default class JobEntry extends Component {
   
   onNewJobPostingSave = (e) => {
     e.preventDefault();
+    util.trackEvent('Job Posting Save Clicked', {
+      boardName: this.state.boardName,
+      companyName: this.state.companyName,
+      jobTitle: this.state.jobTitle,
+    });
     util.submitNewJobPosting(this.state);
   }
 

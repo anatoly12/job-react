@@ -5,6 +5,7 @@ import VoiceRecognition from './VoiceRecognition';
 import RecordRTC from 'recordrtc';
 import axios from 'axios';
 import EntryList from '../containers/entry-list/EntryList';
+import { trackEvent } from '../../lib/analytics';
 
 export default class Call extends React.Component {
   static propTypes = {
@@ -34,6 +35,7 @@ export default class Call extends React.Component {
     this.uploadAudio = this.uploadAudio.bind(this);
     this.onEnd = this.onEnd.bind(this);
     this.onResult = this.onResult.bind(this);
+    this.trackCallEvent = this.trackCallEvent.bind(this);
   }
 
 
@@ -91,6 +93,10 @@ export default class Call extends React.Component {
       uploadSuccess: false,
       noTranscript: false
     });
+
+    this.trackCallEvent('Call Recording Started', {
+      autoStopMs: 30000
+    });
   }
 
   stopRecord() {
@@ -99,6 +105,10 @@ export default class Call extends React.Component {
         blob: this.state.recordAudio.blob,
         src: audioURL,
         stop: true
+      });
+
+      this.trackCallEvent('Call Recording Stopped', {
+        hasBlob: !!this.state.recordAudio.blob
       });
     });
   }
@@ -111,12 +121,24 @@ export default class Call extends React.Component {
     const config = {
       headers: { 'content-type': 'multipart/form-data' }
     };
+
+    this.trackCallEvent('Call Recording Upload Started', {
+      hasTranscript: !!this.state.transcript,
+      hasBlob: !!blob
+    });
+
     axios.post('/entry', fd, config)
     .then( res => {
       console.log('Successful upload!');
+      this.trackCallEvent('Call Recording Upload Succeeded', {
+        transcriptLength: this.state.transcript ? this.state.transcript.length : 0
+      });
     })
     .catch(err => {
       console.log('Error uploading...');
+      this.trackCallEvent('Call Recording Upload Failed', {
+        message: err && err.message ? err.message : 'unknown'
+      });
     });
   }
 
@@ -132,6 +154,14 @@ export default class Call extends React.Component {
       start: false,
       transcript: finalTranscript
     });
+  }
+
+  trackCallEvent(name, properties = {}) {
+    trackEvent(name, Object.assign({
+      promptStep: this.state.prompt,
+      questionIndex: this.state.question,
+      hasTranscript: !!this.state.transcript
+    }, properties));
   }
   render() {
     if (this.state.prompt === 1) {

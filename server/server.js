@@ -29,6 +29,20 @@ AWS.config.update({
 var axios = require('axios')
 const app = express();
 
+const sparkpostToken = process.env.SPARKPOST_AUTH_TOKEN;
+const sparkpostRecipientEmail = process.env.SPARKPOST_RECIPIENT_EMAIL;
+const missingSparkpostEnv = [
+  ['SPARKPOST_AUTH_TOKEN', sparkpostToken],
+  ['SPARKPOST_RECIPIENT_EMAIL', sparkpostRecipientEmail],
+].filter(([, value]) => !value).map(([key]) => key);
+
+if (missingSparkpostEnv.length > 0) {
+  console.error(
+    `Missing required SparkPost environment variables: ${missingSparkpostEnv.join(', ')}`
+  );
+  process.exit(1);
+}
+
 const db = require('../database/db_config.js');
 const rh = require('./requestHandlers');
 
@@ -127,7 +141,7 @@ app.post('/setReminder', function (req, res) {
     url: 'https://api.sparkpost.com/api/v1/transmissions',
     headers: {
       'content-type': 'application/json',
-      'authorization': '0526b81c29cb593ff22fd28413a1e139eedbb0ac'
+      'authorization': sparkpostToken
     },
     data: {
       "options":{"open_tracking":true,"click_tracking":true,"start_time": thankYouTime},
@@ -136,7 +150,7 @@ app.post('/setReminder', function (req, res) {
       "substitution_data":{"signature":"JobFlow Reminder"},
       "recipients":[
         {"address":{
-          "email":"eddieechou@gmail.com",
+          "email": sparkpostRecipientEmail,
           "tags":["reminder"],
           "substitution_data": {
             "customer_type":"Platinum","first_name":"Eddie"
@@ -165,7 +179,7 @@ app.post('/setReminder', function (req, res) {
     url: 'https://api.sparkpost.com/api/v1/transmissions',
     headers: {
       'content-type': 'application/json',
-      'authorization': '0526b81c29cb593ff22fd28413a1e139eedbb0ac'
+      'authorization': sparkpostToken
     },
     data: {
       "options":{"open_tracking":true,"click_tracking":true,"start_time": followUpTime},
@@ -174,7 +188,7 @@ app.post('/setReminder', function (req, res) {
       "substitution_data":{"signature":"JobFlow Reminder"},
       "recipients":[
         {"address":{
-          "email":"eddieechou@gmail.com",
+          "email": sparkpostRecipientEmail,
           "tags":["reminder"],
           "substitution_data": {
             "customer_type":"Platinum","first_name":"Eddie"

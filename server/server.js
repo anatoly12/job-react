@@ -8,6 +8,7 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 const s3 = new AWS.S3();
 const database = require('../database/dbHelper');
+const authMiddleware = require('./authMiddleware');
 
 const upload = multer({
   storage: multerS3({
@@ -43,15 +44,15 @@ app.use(express.static(__dirname + '/../client/dist'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/JobPosting', rh.storeJobPosting);
-app.get('/JobPosting', rh.getJobPosting)
+app.post('/JobPosting', authMiddleware, rh.storeJobPosting);
+app.get('/JobPosting', authMiddleware, rh.getJobPosting)
 
-app.post('/entry', upload.single('media'), (req, res) => {
+app.post('/entry', authMiddleware, upload.single('media'), (req, res) => {
   if (req.body.text.length === 0) {
     res.sendStatus(400);
   }
   let log = {
-    user_id: req.body.user_id ? user_id : '123',
+    user_id: req.userId,
     audio: {
       bucket: req.file ? req.file.bucket : null,
       key: req.file ? req.file.key : null,
@@ -62,9 +63,9 @@ app.post('/entry', upload.single('media'), (req, res) => {
 
 });
 
-app.post('/db/retrieveEntry', (req, res) => {
+app.post('/db/retrieveEntry', authMiddleware, (req, res) => {
   let query = {};
-  query.user_id = req.body.user_id ? req.body.user_id : '123';
+  query.user_id = req.userId;
   database.retrieveEntry(query)
   .then((results) => {
     res.send(results);
@@ -82,10 +83,10 @@ const getAWSSignedUrl = (bucket, key) => {
   return s3.getSignedUrl('getObject', params);
 };
 
-app.get('/entry/:entryId', (req, res) => {
+app.get('/entry/:entryId', authMiddleware, (req, res) => {
   let query = {};
   query.entryId = req.params.entryId;
-  query.user_id = '123';
+  query.user_id = req.userId;
   database.retrieveEntryMedia(query)
   .then( result => {
     let key = result[0].audio.key;;

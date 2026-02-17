@@ -9,6 +9,16 @@ const multerS3 = require('multer-s3');
 const s3 = new AWS.S3();
 const database = require('../database/dbHelper');
 
+const requireEnv = (name) => {
+  if (!process.env[name]) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return process.env[name];
+};
+
+const sparkpostApiKey = requireEnv('SPARKPOST_API_KEY');
+const reminderRecipientEmail = requireEnv('REMINDER_RECIPIENT_EMAIL');
+
 const upload = multer({
   storage: multerS3({
     s3: s3,
@@ -127,7 +137,7 @@ app.post('/setReminder', function (req, res) {
     url: 'https://api.sparkpost.com/api/v1/transmissions',
     headers: {
       'content-type': 'application/json',
-      'authorization': '0526b81c29cb593ff22fd28413a1e139eedbb0ac'
+      'authorization': sparkpostApiKey
     },
     data: {
       "options":{"open_tracking":true,"click_tracking":true,"start_time": thankYouTime},
@@ -136,7 +146,7 @@ app.post('/setReminder', function (req, res) {
       "substitution_data":{"signature":"JobFlow Reminder"},
       "recipients":[
         {"address":{
-          "email":"eddieechou@gmail.com",
+          "email": reminderRecipientEmail,
           "tags":["reminder"],
           "substitution_data": {
             "customer_type":"Platinum","first_name":"Eddie"
@@ -165,7 +175,7 @@ app.post('/setReminder', function (req, res) {
     url: 'https://api.sparkpost.com/api/v1/transmissions',
     headers: {
       'content-type': 'application/json',
-      'authorization': '0526b81c29cb593ff22fd28413a1e139eedbb0ac'
+      'authorization': sparkpostApiKey
     },
     data: {
       "options":{"open_tracking":true,"click_tracking":true,"start_time": followUpTime},
@@ -174,7 +184,7 @@ app.post('/setReminder', function (req, res) {
       "substitution_data":{"signature":"JobFlow Reminder"},
       "recipients":[
         {"address":{
-          "email":"eddieechou@gmail.com",
+          "email": reminderRecipientEmail,
           "tags":["reminder"],
           "substitution_data": {
             "customer_type":"Platinum","first_name":"Eddie"

@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 import util from '../../lib/util';
+import analytics from '../../lib/analytics';
 
 const customContentStyle = {
   maxWidth: 600,
@@ -55,7 +56,23 @@ export default class JobEntry extends Component {
   
   onNewJobPostingSave = (e) => {
     e.preventDefault();
-    util.submitNewJobPosting(this.state);
+    return util.submitNewJobPosting(this.state)
+      .then(() => {
+        analytics.trackEvent('job_saved', {
+          boardName: this.state.boardName,
+          companyName: this.state.companyName,
+          jobTitle: this.state.jobTitle
+        });
+      })
+      .catch((err) => {
+        analytics.trackEvent('job_save_failed', {
+          boardName: this.state.boardName,
+          companyName: this.state.companyName,
+          jobTitle: this.state.jobTitle,
+          error: err && err.message
+        });
+        throw err;
+      });
   }
 
   render() {

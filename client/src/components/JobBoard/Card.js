@@ -42,7 +42,8 @@ const cardSource = {
     return {
       index: props.index,
       listId: props.listId,
-      card: props.card
+      card: props.card,
+      listHeader: props.listHeader
     };
   },
 

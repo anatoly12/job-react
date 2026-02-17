@@ -4,6 +4,7 @@ import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
+import analytics from '../../lib/analytics';
 
 export default class InterviewTab extends Component {
   constructor(props) {
@@ -46,12 +47,19 @@ export default class InterviewTab extends Component {
       reminderTime: interviewTime,
       followUpDate: followUpDate
     })
-    .then(function (response) {
+    .then((response) => {
       // TODO: Show snackbar as confirmation of reminder
       console.log(response);
+      analytics.trackEvent('interview_reminder_scheduled', {
+        reminderDate: interviewDate && interviewDate.toISOString(),
+        reminderTime: interviewTime && interviewTime.toString()
+      });
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log(error);
+      analytics.trackEvent('interview_reminder_failed', {
+        error: error && error.message
+      });
     });
   }
 

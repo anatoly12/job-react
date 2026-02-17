@@ -5,6 +5,7 @@ import VoiceRecognition from './VoiceRecognition';
 import RecordRTC from 'recordrtc';
 import axios from 'axios';
 import EntryList from '../containers/entry-list/EntryList';
+import analytics from '../../lib/analytics';
 
 export default class Call extends React.Component {
   static propTypes = {
@@ -91,6 +92,10 @@ export default class Call extends React.Component {
       uploadSuccess: false,
       noTranscript: false
     });
+    analytics.trackEvent('call_recording_started', {
+      questionId: this.state.question,
+      autoStopMs: 30000
+    });
   }
 
   stopRecord() {
@@ -99,6 +104,10 @@ export default class Call extends React.Component {
         blob: this.state.recordAudio.blob,
         src: audioURL,
         stop: true
+      });
+      analytics.trackEvent('call_recording_stopped', {
+        questionId: this.state.question,
+        hasTranscript: Boolean(this.state.transcript)
       });
     });
   }
@@ -114,9 +123,17 @@ export default class Call extends React.Component {
     axios.post('/entry', fd, config)
     .then( res => {
       console.log('Successful upload!');
+      analytics.trackEvent('call_recording_uploaded', {
+        questionId: this.state.question,
+        transcriptLength: this.state.transcript.length
+      });
     })
     .catch(err => {
       console.log('Error uploading...');
+      analytics.trackEvent('call_recording_upload_failed', {
+        questionId: this.state.question,
+        error: err && err.message
+      });
     });
   }
 

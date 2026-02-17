@@ -1,6 +1,7 @@
 import React from 'react';
 import ListCardContainer from './ListCardContainer';
 import util from '../../../lib/util';
+import { trackEvent } from '../../../lib/analytics';
 
 export default class Board extends React.Component {
   static propTypes = {
@@ -53,13 +54,32 @@ export default class Board extends React.Component {
         }
       ]
     }
+
+    this.handleCardMove = this.handleCardMove.bind(this);
   }
 
   componentWillMount() {
     return util.fetchJobPosting()
     .then( result => { 
       this.setState({ list: result }) 
+      trackEvent('Job Board Loaded', {
+        boardName: this.props.name || 'default',
+        listCount: Array.isArray(result) ? result.length : 0
+      });
+    })
+    .catch(error => {
+      console.error(error);
+      trackEvent('Job Board Load Failed', {
+        boardName: this.props.name || 'default',
+        message: error && error.message ? error.message : 'unknown'
+      });
     });
+  }
+
+  handleCardMove(details = {}) {
+    trackEvent('Job Board Card Moved', Object.assign({
+      boardName: this.props.name || 'default'
+    }, details));
   }
 
   render() {    
@@ -70,7 +90,8 @@ export default class Board extends React.Component {
           key={Math.floor(Math.random()*100)} 
           id={Math.floor(Math.random()*100)} 
           list={listcontainer.cards} 
-          header={listcontainer.header}/>
+          header={listcontainer.header}
+          onCardMove={this.handleCardMove}/>
       ))}
       </div>
     );

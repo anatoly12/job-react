@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { FlatButton, RaisedButton, Dialog, TextField } from 'material-ui';
 import util from '../../lib/util';
+import { trackEvent } from '../../lib/analytics';
 
 const customContentStyle = {
   maxWidth: 600,
@@ -54,8 +55,28 @@ export default class JobEntry extends Component {
   handleJobUrlChange = (e) => { this.setState({ jobUrl: e.target.value }) };
   
   onNewJobPostingSave = (e) => {
-    e.preventDefault();
-    util.submitNewJobPosting(this.state);
+    if (e) {
+      e.preventDefault();
+    }
+
+    const trackingPayload = {
+      boardName: this.state.boardName,
+      companyName: this.state.companyName,
+      jobTitle: this.state.jobTitle,
+      hasDescription: !!this.state.jobDescription,
+    };
+
+    return util.submitNewJobPosting(this.state)
+      .then(() => {
+        trackEvent('Job Saved', Object.assign({ status: 'success' }, trackingPayload));
+      })
+      .catch(error => {
+        console.error(error);
+        trackEvent('Job Save Failed', Object.assign({
+          status: 'error',
+          message: error && error.message ? error.message : 'unknown'
+        }, trackingPayload));
+      });
   }
 
   render() {

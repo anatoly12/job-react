@@ -4,6 +4,7 @@ import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
+import { trackEvent } from '../../lib/analytics';
 
 export default class InterviewTab extends Component {
   constructor(props) {
@@ -31,27 +32,43 @@ export default class InterviewTab extends Component {
     console.log('submitting interview time');
     console.log('interviewDate: ', this.state.interviewDate);
     console.log('interviewTime: ', this.state.interviewTime);
-    // add a day
-    const {interviewDate, interviewTime} = this.state;
-    interviewDate.setDate(interviewDate.getDate() - 1);
-    // Add 1 week to date
-    var followUpDate = new Date();
-    followUpDate.setDate(interviewDate.getDate() + 5);
 
-    // Reminder date is 1 day after
-    // console.log('reminderDate: ', reminderDate);
+    const originalDate = this.state.interviewDate ? new Date(this.state.interviewDate.getTime()) : null;
+    const interviewTime = this.state.interviewTime;
+
+    if (!originalDate || !interviewTime) {
+      trackEvent('Interview Reminder Failed', {
+        reason: 'missing_fields'
+      });
+      return;
+    }
+
+    const reminderDate = new Date(originalDate.getTime());
+    reminderDate.setDate(reminderDate.getDate() - 1);
+
+    var followUpDate = new Date();
+    followUpDate.setDate(reminderDate.getDate() + 5);
 
     axios.post('/setReminder', {
-      reminderDate: interviewDate,
+      reminderDate: reminderDate,
       reminderTime: interviewTime,
       followUpDate: followUpDate
     })
-    .then(function (response) {
+    .then(response => {
       // TODO: Show snackbar as confirmation of reminder
       console.log(response);
+      trackEvent('Interview Reminder Submitted', {
+        interviewDate: originalDate.toISOString(),
+        reminderDate: reminderDate.toISOString(),
+        hasFollowUp: true
+      });
     })
-    .catch(function (error) {
+    .catch(error => {
       console.log(error);
+      trackEvent('Interview Reminder Failed', {
+        reason: 'request_error',
+        message: error && error.message ? error.message : 'unknown'
+      });
     });
   }
 

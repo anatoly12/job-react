@@ -40,6 +40,24 @@ class ListCardContainer extends Component {
         ]
       }
     }));
+
+    const listName = this.props.header || 'unknown';
+
+    this.notifyCardMove({
+      type: 'list_reorder',
+      listId: this.props.id,
+      listName,
+      cardId: dragCard && dragCard.id,
+      cardTitle: dragCard && (dragCard.jobTitle || dragCard.title || dragCard.companyName || ''),
+      fromIndex: dragIndex,
+      toIndex: hoverIndex
+    });
+  }
+
+  notifyCardMove(details = {}) {
+    if (typeof this.props.onCardMove === 'function') {
+      this.props.onCardMove(details);
+    }
   }
 
   render() {
@@ -58,6 +76,7 @@ class ListCardContainer extends Component {
               key={card.id}
               index={i}
               listId={this.props.id}
+              listName={this.props.header}
               card={card}                           
               removeCard={this.removeCard.bind(this)}
               moveCard={this.moveCard.bind(this)} />
@@ -70,9 +89,20 @@ class ListCardContainer extends Component {
 
 const cardTarget = {
   drop(props, monitor, component ) {
-    const { id } = props;
+    const { id, header } = props;
     const sourceObj = monitor.getItem();    
-    if ( id !== sourceObj.listId ) component.pushCard(sourceObj.card);
+    if ( id !== sourceObj.listId ) {
+      component.pushCard(sourceObj.card);
+      component.notifyCardMove({
+        type: 'list_transfer',
+        sourceListId: sourceObj.listId,
+        sourceListName: sourceObj.listName || 'unknown',
+        targetListId: id,
+        targetListName: header || 'unknown',
+        cardId: sourceObj.card && sourceObj.card.id,
+        cardTitle: sourceObj.card && (sourceObj.card.jobTitle || sourceObj.card.title || sourceObj.card.companyName || '')
+      });
+    }
     return {
       listId: id
     };
